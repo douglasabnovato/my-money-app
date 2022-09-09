@@ -40,13 +40,13 @@ Frontend
 
 ## 🚀 Desafios 
 
-- [x] Backend da aplicação de ciclos de pagamentos [186 - 200]  
-- [x] Frontend da aplicação de ciclos de pagamentos [201 - 258] 
-- [x] Melhorias e correções [259 - 260] 
-- [x] Autenticação [backend] da aplicação de ciclos de pagamentos [261 - 272] 
-- [x] Autenticação [frontend] da aplicação de ciclos de pagamentos [273 - 278] 
-- [x] Atualização de dependências da aplicação de ciclos de pagamentos [279 - 280] 
-- [ ] Deploy da aplicação de ciclos de pagamentos [281 - 283]
+- [x] Backend da aplicação de ciclos de pagamentos [189 - 203]  
+- [x] Frontend da aplicação de ciclos de pagamentos [204 - 261] 
+- [x] Melhorias e correções [262 - 265] 
+- [x] Autenticação [backend] da aplicação de ciclos de pagamentos [264 - 275] 
+- [x] Autenticação [frontend] da aplicação de ciclos de pagamentos [276 - 281] 
+- [x] Atualização de dependências da aplicação de ciclos de pagamentos [282 - 283] 
+- [ ] Deploy da aplicação de ciclos de pagamentos [284 - 286]
 
 ## 🚀 Inicializar o projeto 
 
