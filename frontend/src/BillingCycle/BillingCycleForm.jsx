@@ -8,13 +8,16 @@ import LabelAdnInput from "../common/form/LabelAdnInput"
 import ItemList from "./ItemList"
 import Summary from "./Summary"
 
+export const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+
 class BillingCycleForm extends Component { 
 
     calculateSummary(){
-        const sum = (t, v) => t + v 
-        return { 
-            sumOfCredits: this.props.credits.map(c => +c.value || 0).reduce(sum),
-            sumOfDebts: this.props.debts.map(d => +d.value || 0).reduce(sum) 
+        const toCents = v => Math.round((Number(String(v ?? "").replace(",", ".")) || 0) * 100)
+        const total = list => (list || []).reduce((t, item) => t + toCents(item && item.value), 0) / 100
+        return {
+            sumOfCredits: total(this.props.credits),
+            sumOfDebts: total(this.props.debts)
         }
     }
 
@@ -22,7 +25,7 @@ class BillingCycleForm extends Component {
         const { handleSubmit, readOnly, credits, debts } = this.props
         const { sumOfCredits, sumOfDebts } = this.calculateSummary()
         return (
-            <form role="form" onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} noValidate>
                 <div className="box-body">
 
                     <Field name="name" readOnly={readOnly}
@@ -34,9 +37,10 @@ class BillingCycleForm extends Component {
                     <Field name="month" readOnly={readOnly}
                         component={LabelAdnInput}
                         label="Mês"
-                        cols="12 4"
-                        placeholder="Informe o mês"
-                    />
+                        cols="12 4">
+                        <option value="">Selecione</option>
+                        {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+                    </Field>
                     <Field name="year" readOnly={readOnly}
                         component={LabelAdnInput}
                         type="number"

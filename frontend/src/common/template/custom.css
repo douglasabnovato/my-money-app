@@ -12,3 +12,30 @@ button {
     width: 150px;
 }
 
+
+/* Ajustes do ciclo MVP: botões no lugar de links sem destino, avatar por iniciais, foco visível */
+:focus-visible { outline: 3px solid #1b5e9c; outline-offset: 2px; }
+.btn-link.sidebar-toggle { color: #fff; border: 0; border-radius: 0; }
+.btn-link.sidebar-toggle::before { font-family: FontAwesome; content: "\f0c9"; }
+.navbar-custom-menu .dropdown-toggle.btn-link { color: #fff; padding: 15px; border: 0; }
+.avatar-initials { display: inline-flex; align-items: center; justify-content: center; background: #1b5e9c; color: #fff; font-weight: 700; border-radius: 50%; width: 25px; height: 25px; font-size: 11px; margin-right: 6px; }
+.avatar-initials.avatar-lg { width: 90px; height: 90px; font-size: 32px; border: 3px solid rgba(255,255,255,.3); }
+.treeview-toggle { color: #b8c7ce; width: 100%; text-align: left; padding: 12px 5px 12px 15px; border: 0; }
+.treeview-toggle > .fa:first-child { width: 20px; }
+.tab-button { border: 0; }
+.login-logo { font-size: 35px; margin-top: 0; }
+.skin-blue .main-header .logo { background-color: #245b82; }
+.small-box .inner h3 { font-size: 30px; }
+.main-footer { position: static; }
+/* Contraste WCAG AA sobre o tema skin-blue do AdminLTE */
+.skin-blue .main-header .navbar { background-color: #245b82; }
+.skin-blue .sidebar-menu .treeview-menu > li > a { color: #d2dee4; }
+.btn-link { color: #1d4f7a; }
+.bg-green, .small-box.bg-green { background-color: #00733e !important; }
+.bg-red, .small-box.bg-red { background-color: #b43a2b !important; }
+.content-header > h1 > small { color: #555; }
+.text-muted { color: #595959; }
+.sidebar-menu .treeview-toggle.btn-link { color: #d2dee4; }
+.main-footer a { color: #1d4f7a; }
+div.redux-toastr .toastr.rrt-success { background-color: #2e7d32; }
+div.redux-toastr .toastr.rrt-error { background-color: #b3261e; }

@@ -6,23 +6,27 @@
   <img alt="MyMoneyApp-Frontend-Dashboard" title="#MyMoneyApp-Frontend-Dashboard" src="./.github/tela.jpg">
 </p> 
 
+## 🌐 Em produção
+
+- Web: https://my-money-web.onrender.com (site estático no Render)
+- API: https://my-money-api.onrender.com/health (Render Free + MongoDB Atlas M0)
+- Passo a passo do deploy: [docs/DEPLOY.md](docs/DEPLOY.md). No plano gratuito a API dorme após 15 min sem acesso e leva cerca de 1 min para acordar.
+
 ## 💻 Tecnologias 🚀
 
-Backend
-- [x] 1. MongoDB
-- [x] 2. Mongoose
-- [x] 3. Node RestFull
-- [x] 4. Express
-- [x] 5. Node
-- [x] 6. Postman/Insomnia
+Backend (v2)
+- [x] 1. MongoDB + Mongoose 8
+- [x] 2. Express 5 (rotas explícitas; o node-restful foi removido)
+- [x] 3. JWT (payload mínimo) + bcryptjs
+- [x] 4. zod, helmet, rate limit
+- [x] 5. node:test + supertest
 
 Frontend
-- [x] 0. Html, css, javascript
-- [x] 1. Bootstrap
-- [x] 2. React - react-dom, react-router  
+- [x] 0. Vite (substitui react-scripts 1.x)
+- [x] 1. AdminLTE 2 / Bootstrap 3 (somente CSS)
+- [x] 2. React 18 - react-dom, react-router 7  
 - [x] 3. Redux - react-redux, redux-form, redux-multi, redux-promise, redux-thunk, redux-toastr   
 - [x] 4. Axios
-- [x] 5. Lodash
 - [x] 6. Redux DevTools
 - [x] 7. Redux Form 
 - [x] 8. Redux Toastr
@@ -46,9 +50,34 @@ Frontend
 - [x] Autenticação [backend] da aplicação de ciclos de pagamentos [264 - 275] 
 - [x] Autenticação [frontend] da aplicação de ciclos de pagamentos [276 - 281] 
 - [x] Atualização de dependências da aplicação de ciclos de pagamentos [282 - 283] 
-- [ ] Deploy da aplicação de ciclos de pagamentos [284 - 286]
+- [ ] Deploy da aplicação de ciclos de pagamentos [284 - 286] — blueprint em `render.yaml`, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md)
 
-## 🚀 Inicializar o projeto 
+## 🔐 O que mudou na v2 (ciclo MVP)
+
+- Cada ciclo pertence a um usuário: ninguém vê, altera ou exclui ciclos de outra pessoa.
+- O token JWT não carrega mais o hash da senha.
+- O front roda no Node atual (Vite) e mostra erros de rede sem quebrar.
+- Valores em reais formatados (R$ 1.234,56), mês por nome e status por lista.
+
+Documentação: [docs/ANALISE.md](docs/ANALISE.md) · [docs/ARQUITETURA.md](docs/ARQUITETURA.md) · [docs/PLANO-DE-ACAO.md](docs/PLANO-DE-ACAO.md)
+
+## 🚀 Inicializar o projeto
+
+```sh
+# API
+cd backend && cp .env.example .env    # MONGODB_URI e AUTH_SECRET
+npm install && npm run dev            # :3003  (ou MONGODB_URI=memory para testar sem banco)
+
+# Front
+cd frontend && cp .env.example .env   # VITE_API_BASE=http://localhost:3003
+npm install && npm run dev            # :5173
+```
+
+Testes: `npm test` em `backend/` (9) e `frontend/` (4). Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: mova `ci/github-actions-ci.yml` para `.github/workflows/`.
+
+### Instruções originais
+
+ 
 
 #### Backend
 

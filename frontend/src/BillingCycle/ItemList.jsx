@@ -27,25 +27,30 @@ class ItemList extends Component {
         return list.map((item, index) => (
             <tr key={index}>
                 <td><Field name={`${this.props.field}[${index}].name`} component={Input}
-                        placeholder="Informe o nome" readOnly={this.props.readOnly}/></td>
+                        placeholder="Informe o nome" label={`${this.props.legend}: nome da linha ${index + 1}`} readOnly={this.props.readOnly}/></td>
                 <td><Field name={`${this.props.field}[${index}].value`} component={Input}
-                        placeholder="Informe o valor" readOnly={this.props.readOnly}/></td>
+                        placeholder="0,00" inputMode="decimal" label={`${this.props.legend}: valor da linha ${index + 1}`} readOnly={this.props.readOnly}/></td>
                 <If test={this.props.showStatus}>
-                    <td><Field name={`${this.props.field}[${index}].status`} component={Input}
-                        placeholder="Informe o status" readOnly={this.props.readOnly}/></td>
+                    <td><Field name={`${this.props.field}[${index}].status`} component="select" className="form-control"
+                        aria-label={`Status da linha ${index + 1}`} disabled={this.props.readOnly}>
+                        <option value="">Status</option>
+                        <option value="PAGO">Pago</option>
+                        <option value="PENDENTE">Pendente</option>
+                        <option value="AGENDADO">Agendado</option>
+                    </Field></td>
                 </If>
                 <td>
-                    <button type="button" className="btn btn-success"
+                    <button type="button" className="btn btn-success" aria-label={`Adicionar linha após a ${index + 1}`}
                             onClick={() => this.add(index + 1)}>
-                        <i className="fa fa-plus"></i>
+                        <i className="fa fa-plus" aria-hidden="true"></i>
                     </button>
-                    <button type="button" className="btn btn-warning"
+                    <button type="button" className="btn btn-warning" aria-label={`Duplicar linha ${index + 1}`}
                             onClick={() => this.add(index + 1, item)}>
-                        <i className="fa fa-clone"></i>
+                        <i className="fa fa-clone" aria-hidden="true"></i>
                     </button>
-                    <button type="button" className="btn btn-danger"
+                    <button type="button" className="btn btn-danger" aria-label={`Remover linha ${index + 1}`}
                             onClick={() => this.remove(index)}>
-                        <i className="fa fa-trash-o"></i>
+                        <i className="fa fa-trash-o" aria-hidden="true"></i>
                     </button>
                 </td>
             </tr>

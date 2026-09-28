@@ -9,7 +9,7 @@ import Auth from '../auth/auth'
 import { validateToken } from '../auth/authActions'
 
 class AuthOrApp extends Component {
-    componentWillMount() {
+    componentDidMount() {
         if (this.props.auth.user) {
             this.props.validateToken(this.props.auth.user.token)
         }
@@ -18,7 +18,7 @@ class AuthOrApp extends Component {
     render() {
         const { user, validToken } = this.props.auth
         if (user && validToken) {
-            axios.defaults.headers.common['authorization'] = user.token
+            axios.defaults.headers.common['authorization'] = `Bearer ${user.token}`
             return <App>{this.props.children}</App>
         } else if (!user && !validToken) {
             return <Auth />

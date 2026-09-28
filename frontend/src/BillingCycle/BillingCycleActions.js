@@ -1,10 +1,12 @@
 import axios from "axios"
+import consts from "../consts"
+import { showErrors } from "../common/msg/errors"
 import { toastr } from "react-redux-toastr"
 import { reset as resetForm, initialize } from "redux-form"
 
 import { showTabs, selectTab } from "../common/Tab/TabActions"
 
-const BASE_URL = "http://localhost:3003/api"
+const BASE_URL = consts.API_URL
 const INITIAL_VALUES = {credits: [{}], debts: [{}]}
 
 export function getList(){
@@ -33,15 +35,14 @@ function submit(values, method){
     return dispatch => {
 
         const id = values._id ? values._id : ""
+        const { _id, userId, __v, createdAt, updatedAt, ...payload } = values
 
-        axios[method](`${BASE_URL}/billingCycles/${id}`, values) 
+        axios[method](`${BASE_URL}/billingCycles/${id}`, payload) 
             .then(resp => {
                 toastr.success("Sucesso", "Operação realizada com sucesso.") 
                 dispatch(init())
             })
-            .catch(e => {
-                e.response.data.errors.forEach(error => toastr.error("Erro", error))
-            }) 
+            .catch(showErrors)
     }
 }
 

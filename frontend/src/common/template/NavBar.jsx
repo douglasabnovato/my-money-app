@@ -1,7 +1,13 @@
+/* Menu do usuário: iniciais no lugar da foto (lorempixel foi desativado) e botão de sair */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { logout } from '../../auth/authActions'
+
+/* Duas primeiras iniciais do nome */
+function initials(name = '') {
+    return name.trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase() || '?'
+}
 
 class Navbar extends Component {
     constructor(props) {
@@ -9,36 +15,32 @@ class Navbar extends Component {
         this.state = { open: false }
     }
 
-    changeOpen() {
-        this.setState({ open: !this.state.open })
+    /* Abre ou fecha o menu */
+    toggle(open = !this.state.open) {
+        this.setState({ open })
     }
 
     render() {
         const { name, email } = this.props.user
+        const { open } = this.state
         return (
-            <div className="navbar-custom-menu">
-                <ul className="nav navbar-nav">
-                    <li onMouseLeave={() => this.changeOpen()}
-                        className={`dropdown user user-menu ${this.state.open ? 'open' :
-                            ''}`}>
-                        <a href="javascript:;" onClick={() => this.changeOpen()}
-                            aria-expanded={this.state.open ? 'true' : 'false'}
-                            className="dropdown-toggle"
-                            data-toggle="dropdown">
-                            <img src="http://lorempixel.com/160/160/abstract"
-                                className="user-image" alt="User Image" />
-                            <span className="hidden-xs">{name}</span>
-                        </a>
-                        <ul className="dropdown-menu">
-                            <li className="user-header">
-                                <img src="http://lorempixel.com/160/160/abstract"
-                                    className="img-circle" alt="User Image" />
+            <div className='navbar-custom-menu'>
+                <ul className='nav navbar-nav'>
+                    <li className={`dropdown user user-menu ${open ? 'open' : ''}`}
+                        onKeyDown={e => e.key === 'Escape' && this.toggle(false)}>
+                        <button type='button' className='dropdown-toggle btn btn-link' aria-expanded={open} aria-haspopup='true'
+                            onClick={() => this.toggle()}>
+                            <span className='user-image avatar-initials' aria-hidden='true'>{initials(name)}</span>
+                            <span className='hidden-xs'>{name}</span>
+                        </button>
+                        <ul className='dropdown-menu'>
+                            <li className='user-header'>
+                                <span className='img-circle avatar-initials avatar-lg' aria-hidden='true'>{initials(name)}</span>
                                 <p>{name}<small>{email}</small></p>
                             </li>
-                            <li className="user-footer">
-                                <div className="pull-right">
-                                    <a href="#" onClick={this.props.logout}
-                                        className="btn btn-default btn-flat">Sair</a>
+                            <li className='user-footer'>
+                                <div className='pull-right'>
+                                    <button type='button' onClick={this.props.logout} className='btn btn-default btn-flat'>Sair</button>
                                 </div>
                             </li>
                         </ul>
@@ -53,3 +55,4 @@ const mapStateToProps = state => ({ user: state.auth.user })
 const mapDispatchToProps = dispatch => bindActionCreators({ logout }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Navbar)
+/* Fim de NavBar.jsx */

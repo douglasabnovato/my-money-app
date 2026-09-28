@@ -1,22 +1,31 @@
+/* Estado de autenticação persistido no localStorage (com leitura tolerante a falhas) */
 const userKey = '_mymoney_user'
-const INITIAL_STATE = {
-    user: JSON.parse(localStorage.getItem(userKey)),
-    validToken: false
+
+/* Lê o usuário salvo sem quebrar em navegação privada ou JSON inválido */
+function readUser() {
+    try {
+        return JSON.parse(localStorage.getItem(userKey))
+    } catch {
+        return null
+    }
 }
 
+const INITIAL_STATE = { user: readUser(), validToken: false }
+
+/* Reducer de autenticação */
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case 'TOKEN_VALIDATED':
             if (action.payload) {
                 return { ...state, validToken: true }
-            } else {
-                localStorage.removeItem(userKey)
-                return { ...state, validToken: false, user: null }
             }
+            try { localStorage.removeItem(userKey) } catch { /* sem armazenamento */ }
+            return { ...state, validToken: false, user: null }
         case 'USER_FETCHED':
-            localStorage.setItem(userKey, JSON.stringify(action.payload))
+            try { localStorage.setItem(userKey, JSON.stringify(action.payload)) } catch { /* sem armazenamento */ }
             return { ...state, user: action.payload, validToken: true }
         default:
             return state
     }
 }
+/* Fim de authReducer.js */

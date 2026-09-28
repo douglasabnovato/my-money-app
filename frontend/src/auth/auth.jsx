@@ -30,21 +30,22 @@ class Auth extends Component {
         const { loginMode } = this.state
         const { handleSubmit } = this.props
         return (
-            <div className="login-box">
-                <div className="login-logo"><b> My</b> Money</div>
+            <main className="login-box">
+                <h1 className="login-logo"><b> My</b> Money</h1>
                 <div className="login-box-body">
                     <p className="login-box-msg">Bem vindo!</p>
                     <form onSubmit={handleSubmit(v => this.onSubmit(v))}>
-                        <Field component={Input} type="input" name="name"
+                        <Field component={Input} type="text" name="name" autoComplete="name"
                             placeholder="Nome" icon='user' hide={loginMode} />
-                        <Field component={Input} type="email" name="email"
+                        <Field component={Input} type="email" name="email" autoComplete="email"
                             placeholder="E-mail" icon='envelope' />
-                        <Field component={Input} type="password" name="password"
+                        <Field component={Input} type="password" name="password" autoComplete={loginMode ? 'current-password' : 'new-password'}
                             placeholder="Senha" icon='lock' />
-                        <Field component={Input} type="password" name="confirm_password"
-                            placeholder="Confirmar Senha" icon='lock' hide={loginMode} />
+                        {!loginMode && <p className="help-block">Mínimo de 8 caracteres, com maiúscula, minúscula e número.</p>}
+                        <Field component={Input} type="password" name="confirm_password" autoComplete="new-password"
+                            placeholder="Confirmar senha" icon='lock' hide={loginMode} />
                         <Row>
-                            <Grid cols="4">
+                            <Grid cols="12 6">
                                 <button type="submit"
                                     className="btn btn-primary btn-block btn-flat">
                                     {loginMode ? 'Entrar' : 'Registrar'}
@@ -53,13 +54,13 @@ class Auth extends Component {
                         </Row>
                     </form>
                     <br />
-                    <a onClick={() => this.changeMode()}>
+                    <button type="button" className="btn btn-link" onClick={() => this.changeMode()}>
                         {loginMode ? 'Novo usuário? Registrar aqui!' :
                             'Já é cadastrado? Entrar aqui!'}
-                    </a>
+                    </button>
                 </div>
                 <Messages />
-            </div>
+            </main>
         )
     }
 }

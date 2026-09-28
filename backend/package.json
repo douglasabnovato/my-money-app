@@ -1,28 +1,30 @@
 {
   "name": "my-money-backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/loader.js",
+  "version": "2.0.0",
+  "description": "API do My Money: ciclos de pagamento por usuário com autenticação JWT.",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon",
-    "production": "pm2 start src/loader.js --name my-money-backend"
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "claim-orphans": "node scripts/claim-orphans.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
   "dependencies": {
-    "bcrypt": "5.0.1",
-    "body-parser": "1.18.3",
-    "express": "4.16.3",
-    "express-query-int": "3.0.0",
-    "jsonwebtoken": "8.3.0",
-    "lodash": "4.17.21",
-    "mongoose": "6.1.7",
-    "mongoose-paginate": "5.0.3",
-    "node-restful": "0.2.6",
-    "pm2": "5.1.2"
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0",
+    "zod": "^3.25.0"
   },
   "devDependencies": {
-    "nodemon": "1.18.4"
+    "supertest": "^7.1.0"
   }
 }

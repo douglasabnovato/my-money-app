@@ -9,7 +9,7 @@ class TabContent extends Component{
         const visible = this.props.tab.visible[this.props.id] 
         return(
             <If test={visible}>
-                <div id={this.props.id}
+                <div id={this.props.id} role="tabpanel" aria-labelledby={`${this.props.id}-tab`}
                     className={`tab-pane ${selected ? "active" : ""}`}>
                     {this.props.children}
                 </div>
