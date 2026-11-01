@@ -8,6 +8,15 @@
   <img alt="MyMoneyApp-Frontend-Dashboard" title="#MyMoneyApp-Frontend-Dashboard" src="./.github/tela.jpg">
 </p> 
 
+## 🧠 O que aprendi
+
+> Proposta de 01/11/2026, escrita a partir do código e das dependências. Ajuste com a sua experiência.
+
+- Gerenciar o estado de um front React com Redux e formulários com Redux Form.
+- Autenticar com JWT e guardar senhas com `bcryptjs`.
+- Separar regras (`domain`) e acesso a dados (`repositories`) na API.
+- Migrar um projeto antigo para Vite, mantendo testes no CI.
+
 ## 🌐 Publicação
 
 - Fora do ar desde a conferência de 31/10/2026; para ver o projeto, rode localmente (seção "Inicializar o projeto").
