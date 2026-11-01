@@ -1,4 +1,4 @@
-> **Projeto de estudo.** Estado conferido em 30/10/2026: 2 endereço(s) citado(s) abaixo não responde(m). Detalhes em [docs/AVALIACAO.md](docs/AVALIACAO.md) e próximos passos em [docs/PLANO-ESTRATEGICO.md](docs/PLANO-ESTRATEGICO.md).
+> **Projeto de estudo.** Estado conferido em 31/10/2026: os endereços que seguem fora do ar foram retirados deste README. Detalhes em [docs/AVALIACAO.md](docs/AVALIACAO.md) e próximos passos em [docs/PLANO-ESTRATEGICO.md](docs/PLANO-ESTRATEGICO.md).
 
 <h4 align="center"> 
 	🚧 My Money App 🚧
@@ -8,10 +8,9 @@
   <img alt="MyMoneyApp-Frontend-Dashboard" title="#MyMoneyApp-Frontend-Dashboard" src="./.github/tela.jpg">
 </p> 
 
-## 🌐 Em produção
+## 🌐 Publicação
 
-- Web: https://my-money-web.onrender.com (site estático no Render)
-- API: https://my-money-api.onrender.com/health (Render Free + MongoDB Atlas M0)
+- Fora do ar desde a conferência de 31/10/2026; para ver o projeto, rode localmente (seção "Inicializar o projeto").
 - Passo a passo do deploy: [docs/DEPLOY.md](docs/DEPLOY.md). No plano gratuito a API dorme após 15 min sem acesso e leva cerca de 1 min para acordar.
 
 ## 💻 Tecnologias 🚀
