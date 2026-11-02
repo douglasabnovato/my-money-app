@@ -14,7 +14,7 @@ button {
 
 
 /* Ajustes do ciclo MVP: botões no lugar de links sem destino, avatar por iniciais, foco visível */
-:focus-visible { outline: 3px solid #1b5e9c; outline-offset: 2px; }
+:focus-visible { outline: 3px solid #1b5e9c !important; outline-offset: 2px; }
 .btn-link.sidebar-toggle { color: #fff; border: 0; border-radius: 0; }
 .btn-link.sidebar-toggle::before { font-family: FontAwesome; content: "\f0c9"; }
 .navbar-custom-menu .dropdown-toggle.btn-link { color: #fff; padding: 15px; border: 0; }
@@ -31,6 +31,7 @@ button {
 .skin-blue .main-header .navbar { background-color: #245b82; }
 .skin-blue .sidebar-menu .treeview-menu > li > a { color: #d2dee4; }
 .btn-link { color: #1d4f7a; }
+.btn-primary { background-color: #1d4f7a; border-color: #173f61; color: #fff; }
 .bg-green, .small-box.bg-green { background-color: #00733e !important; }
 .bg-red, .small-box.bg-red { background-color: #b43a2b !important; }
 .content-header > h1 > small { color: #555; }
