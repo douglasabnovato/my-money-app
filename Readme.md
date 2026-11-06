@@ -1,4 +1,29 @@
-> **Projeto de estudo.** Estado conferido em 31/10/2026: os endereços que seguem fora do ar foram retirados deste README. Detalhes em [docs/AVALIACAO.md](docs/AVALIACAO.md) e próximos passos em [docs/PLANO-ESTRATEGICO.md](docs/PLANO-ESTRATEGICO.md).
+> **Projeto de estudo (N1).** Estado conferido em 06/11/2026. Sem publicação no ar: rode localmente (seção "Inicializar o projeto"). Critérios em [docs/MVP.md](docs/MVP.md).
+
+## Estado e próximos passos (ciclo de 03/11/2026)
+
+Sem link publicado: o endereço antigo no Render dava 404 em 30/10/2026, e a decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
+
+**O que foi feito**
+
+- Ciclos por usuário, JWT sem hash da senha e front migrado para Vite (PR #10, #11).
+- Alerta alto da API tratado com o zod 4; `npm audit --omit=dev` sem alertas na API e no front (PR #13, #14).
+- Código antigo removido e licença MIT adicionada (PR #8, #9).
+- Painel mostra quanto sobrou dos créditos (taxa de poupança) e não quebra com resumo incompleto, com testes (PR #20).
+- CI passa a rodar também nos PRs para `developer/**` (PR #20).
+
+**O que queremos fazer**
+
+- [#15](https://github.com/douglasabnovato/my-money-app/issues/15) Testar o cadastro de ciclo na tela.
+- [#16](https://github.com/douglasabnovato/my-money-app/issues/16) Mostrar o carregamento no painel e na lista.
+- [#17](https://github.com/douglasabnovato/my-money-app/issues/17) Proteger a `main` com PR e CI obrigatórios (responsável).
+- [#18](https://github.com/douglasabnovato/my-money-app/issues/18) Decidir a publicação no Render (responsável).
+- [#19](https://github.com/douglasabnovato/my-money-app/issues/19) Mostrar a evolução mensal no painel.
+
+**Onde está a documentação**
+
+- [docs/MVP.md](docs/MVP.md): estado de cada critério, com evidência e data.
+- [docs/PLANO-DE-ACAO.md](docs/PLANO-DE-ACAO.md): plano do ciclo, pesquisa e backlog.
 
 <h4 align="center"> 
 	🚧 My Money App 🚧
@@ -83,7 +108,7 @@ cd frontend && cp .env.example .env   # VITE_API_BASE=http://localhost:3003
 npm install && npm run dev            # :5173
 ```
 
-Testes: `npm test` em `backend/` (9) e `frontend/` (4). Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: mova `ci/github-actions-ci.yml` para `.github/workflows/`.
+Testes: `npm test` em `backend/` (9) e `frontend/` (8). Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: `.github/workflows/ci.yml`, em push para a `main` e em PR para a `main` e `developer/**`.
 
 ### Instruções originais
 
@@ -132,8 +157,8 @@ Frontend - Layout Responsivo
 - [x] 13. Navegação com o componente Link do `react-router`, mas decidi manter.
 - [x] 14. Elemento de autenticação que determina se será exibido o auth ou o app
 - [x] 15. atualizando projeto para `npm i -g create-react-app`, `npx create-react-app frontend`
-- [ ] warning: TypeError: Cannot read properties of undefined (reading 'credit')
-- [ ] warning: Unhandled Rejection (TypeError): Cannot read properties of undefined (reading 'credit')
+- [x] warning: TypeError: Cannot read properties of undefined (reading 'credit') — em 06/11/2026 o reducer do painel passou a transformar resposta sem dados em zero (teste em `frontend/src/__tests__/app.test.jsx`)
+- [x] warning: Unhandled Rejection (TypeError): Cannot read properties of undefined (reading 'credit') — mesma correção
 
 ## 📝 Licença
 

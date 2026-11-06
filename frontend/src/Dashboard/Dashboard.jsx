@@ -8,7 +8,14 @@ import ContentHeader from '../common/template/ContentHeader'
 import Content from '../common/template/Content'
 import ValueBox from  '../common/widget/ValueBox'
 import Row from  '../common/layout/Row'
-import { formatBRL } from '../common/format'
+import { consolidar, formatBRL, formatPercent } from '../common/format'
+
+/* Frase sobre a parte dos créditos que sobrou depois dos débitos */
+export function fraseTaxa({ taxa, saldo }) {
+    if (taxa === null) return 'Cadastre créditos para ver quanto sobra.'
+    if (saldo < 0) return `Os débitos passam dos créditos em ${formatBRL(-saldo)}.`
+    return `Sobraram ${formatPercent(taxa)} dos créditos.`
+}
 
 class Dashboard extends Component {
 
@@ -17,7 +24,8 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { credit, debt } = this.props.summary
+        const resumo = consolidar(this.props.summary)
+        const { credit, debt, saldo } = resumo
         const { error } = this.props
         return (
             <div> 
@@ -30,8 +38,9 @@ class Dashboard extends Component {
                         <ValueBox cols='12 4' color='red' icon='credit-card'
                             value={formatBRL(debt)} text='Total de Débitos' />
                         <ValueBox cols='12 4' color='blue' icon='money'
-                            value={formatBRL(credit - debt)} text='Valor Consolidado' />
+                            value={formatBRL(saldo)} text='Valor Consolidado' />
                     </Row> 
+                    <p className='lead' role='status'>{fraseTaxa(resumo)}</p>
                 </Content> 
             </div>
         )
