@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { getList, showUpdate, showDelete } from './BillingCycleActions'
 import { MONTHS } from './BillingCycleForm'
 
-class BillingCycleList extends Component {
+export class BillingCycleList extends Component {
 
     componentDidMount() {
         this.props.getList()
@@ -30,11 +30,12 @@ class BillingCycleList extends Component {
     }
 
     render() {
-        const { list = [], error } = this.props
+        const { list = [], error, loading } = this.props
         return (
             <div>
+                {loading && <p className='text-muted' role='status'>Carregando ciclos…</p>}
                 {error && <p className='alert alert-warning' role='alert'>Não foi possível carregar os ciclos. Verifique a conexão.</p>}
-                {!error && list.length === 0 && <p className='text-muted'>Nenhum ciclo cadastrado. Use a aba “Incluir”.</p>}
+                {!loading && !error && list.length === 0 && <p className='text-muted'>Nenhum ciclo cadastrado. Use a aba “Incluir”.</p>}
                 <table className='table'>
                     <thead>
                         <tr>
@@ -53,7 +54,7 @@ class BillingCycleList extends Component {
     }
 }
 
-const mapStateToProps = state => ({ list: state.billingCycle.list, error: state.billingCycle.error })
+const mapStateToProps = state => ({ list: state.billingCycle.list, error: state.billingCycle.error, loading: state.billingCycle.loading })
 const mapDispatchToProps = dispatch => bindActionCreators({getList, showUpdate, showDelete}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(BillingCycleList)
