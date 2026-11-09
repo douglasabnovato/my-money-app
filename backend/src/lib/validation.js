@@ -5,7 +5,9 @@ const { z } = require("zod");
 function toNumber(v) {
   if (typeof v !== "string") return v;
   const s = v.trim();
-  return s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s;
+  if (!s.includes(",")) return s;
+  /* Só o formato brasileiro: "1500,50" ou "1.500,50"; misturas como "1,500.50" ficam inválidas (400) */
+  return /^\d{1,3}(\.\d{3})*,\d+$|^\d+,\d+$/.test(s) ? s.replace(/\./g, "").replace(",", ".") : "inválido";
 }
 
 const money = z.preprocess(toNumber, z.coerce.number().finite().min(0).max(100_000_000).transform((n) => Math.round(n * 100) / 100));

@@ -89,7 +89,7 @@ Executado em 06/11/2026, nas branches `feature/2026-11-06` → `developer/sprint
 
 **Arquitetura.** Front React 18 + Redux (multi, thunk, promise) com Vite; API Express 5 + zod + Mongoose, com repositório em memória para testes e demonstração. As ações de busca agora despacham `*_REQUESTED` antes da promessa (redux-multi), e os reducers guardam `loading`. O esquema `money` da API converte "1.500,50" e "1500,50" antes de validar.
 
-**Riscos.** A conversão trata a vírgula como separador decimal e o ponto como milhar quando há vírgula; "1.500" sem vírgula continua 1,5. Sem proteção na `main` (#17).
+**Riscos.** Com vírgula, a API só aceita o formato brasileiro ("1500,50" ou "1.500,50"); misturas como "1,500.50" respondem 400. Sem vírgula vale o ponto decimal: "1.500" continua 1,5. Com dois pedidos de lista ao mesmo tempo, o primeiro a chegar desliga o "Carregando" (efeito só visual). Sem proteção na `main` (#17).
 
 **Qualidade.** API: 10 testes (`npm test`). Front: 13 (`npx vitest run`) e build. Fluxo percorrido no navegador com axe.
 

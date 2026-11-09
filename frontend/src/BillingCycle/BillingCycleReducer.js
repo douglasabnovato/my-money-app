@@ -5,7 +5,7 @@ const INITIAL_STATE = { list: [], error: false, loading: false }
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
         case 'BILLING_CYCLES_REQUESTED':
-            return { ...state, loading: true }
+            return { ...state, loading: true, error: false }
         case 'BILLING_CYCLES_FETCHED':
             if (action.error) return { ...state, error: true, loading: false }
             return { ...state, list: Array.isArray(action.payload.data) ? action.payload.data : [], error: false, loading: false }

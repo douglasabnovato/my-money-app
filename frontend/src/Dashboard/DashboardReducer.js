@@ -5,7 +5,7 @@ const INITIAL_STATE = { summary: { credit: 0, debt: 0 }, error: false, loading: 
 export default function (state = INITIAL_STATE, action) {
     switch (action.type) {
         case 'BILLING_SUMMARY_REQUESTED':
-            return { ...state, loading: true }
+            return { ...state, loading: true, error: false }
         case 'BILLING_SUMMARY_FETCHED':
             if (action.error) return { ...state, error: true, loading: false }
             const data = (action.payload && action.payload.data) || {}

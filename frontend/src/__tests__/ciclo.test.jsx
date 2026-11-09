@@ -45,6 +45,8 @@ describe('cadastro de ciclo na tela', () => {
   it('preenche nome, mês, ano, um crédito e um débito, mostra o saldo e envia', async () => {
     const { store, tipos } = criarStore()
     store.dispatch(init())
+    await waitFor(() => expect(tipos).toContain('BILLING_CYCLES_FETCHED'))
+    expect(axios.get).toHaveBeenCalledTimes(1)
     render(
       <Provider store={store}>
         <BillingCycleForm onSubmit={values => store.dispatch(create(values))} submitLabel="Incluir" submitClass="primary" />
@@ -68,7 +70,10 @@ describe('cadastro de ciclo na tela', () => {
     expect(url).toMatch(/\/api\/billingCycles\/$/)
     expect(corpo).toMatchObject({ name: 'Novembro', month: '11', year: '2026' })
     expect(corpo.credits[0]).toEqual({ name: 'Salário', value: '4000' })
+    expect(corpo.debts[0]).toMatchObject({ name: 'Aluguel', value: '1500,50' })
+    /* Depois de salvar, a lista é pedida de novo e chega */
     await waitFor(() => expect(tipos).toContain('BILLING_CYCLES_FETCHED'))
+    expect(axios.get).toHaveBeenCalledTimes(2)
     expect(store.getState().billingCycle.list).toHaveLength(1)
   })
 })
@@ -79,8 +84,8 @@ describe('carregamento, vazio e erro', () => {
     expect(d.loading).toBe(true)
     d = dashboardReducer(d, { type: 'BILLING_SUMMARY_FETCHED', error: true, payload: new Error('x') })
     expect(d).toMatchObject({ loading: false, error: true })
-    let b = billingReducer(undefined, { type: 'BILLING_CYCLES_REQUESTED' })
-    expect(b.loading).toBe(true)
+    let b = billingReducer({ list: [], error: true, loading: false }, { type: 'BILLING_CYCLES_REQUESTED' })
+    expect(b).toMatchObject({ loading: true, error: false })
     b = billingReducer(b, { type: 'BILLING_CYCLES_FETCHED', payload: { data: null } })
     expect(b).toEqual({ list: [], error: false, loading: false })
   })

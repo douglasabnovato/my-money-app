@@ -99,6 +99,7 @@ test("valor com vírgula (formato brasileiro) é aceito e somado em centavos", a
   const summary = await request(app).get("/api/billingCycles/summary").set("Authorization", token).expect(200);
   assert.deepEqual(summary.body, { credit: 4000, debt: 1500.5, balance: 2499.5 });
   await request(app).post("/api/billingCycles").set("Authorization", token).send({ ...cycle, debts: [{ name: "x", value: "abc" }] }).expect(400);
+  await request(app).post("/api/billingCycles").set("Authorization", token).send({ ...cycle, debts: [{ name: "x", value: "1,500.50" }] }).expect(400);
 });
 test("falha do banco vira 500 no formato { errors } (sem travar a requisição)", async () => {
   const repos = createMemoryRepositories();
