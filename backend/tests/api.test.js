@@ -89,6 +89,17 @@ test("ciclo inválido responde 400 com mensagens", async () => {
   const res = await request(app).post("/api/billingCycles").set("Authorization", token).send({ name: "", month: 13, year: 1900, debts: [{ name: "x", value: -1, status: "QUALQUER" }] }).expect(400);
   assert.ok(res.body.errors.length >= 4);
 });
+test("valor com vírgula (formato brasileiro) é aceito e somado em centavos", async () => {
+  const app = build();
+  const token = await signup(app, "cris@ex.com");
+  const comVirgula = { ...cycle, credits: [{ name: "Salário", value: "4.000,00" }], debts: [{ name: "Aluguel", value: "1500,50", status: "PAGO" }] };
+  const { body } = await request(app).post("/api/billingCycles").set("Authorization", token).send(comVirgula).expect(201);
+  assert.equal(body.credits[0].value, 4000);
+  assert.equal(body.debts[0].value, 1500.5);
+  const summary = await request(app).get("/api/billingCycles/summary").set("Authorization", token).expect(200);
+  assert.deepEqual(summary.body, { credit: 4000, debt: 1500.5, balance: 2499.5 });
+  await request(app).post("/api/billingCycles").set("Authorization", token).send({ ...cycle, debts: [{ name: "x", value: "abc" }] }).expect(400);
+});
 test("falha do banco vira 500 no formato { errors } (sem travar a requisição)", async () => {
   const repos = createMemoryRepositories();
   repos.cycles.list = async () => { throw new Error("mongo fora"); };

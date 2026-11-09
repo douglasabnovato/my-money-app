@@ -1,7 +1,14 @@
 /* Esquemas zod de autenticação e ciclo de pagamento */
 const { z } = require("zod");
 
-const money = z.coerce.number().finite().min(0).max(100_000_000).transform((n) => Math.round(n * 100) / 100);
+/* Aceita o valor como o front envia: número, "1500.5" ou no formato brasileiro "1.500,50" */
+function toNumber(v) {
+  if (typeof v !== "string") return v;
+  const s = v.trim();
+  return s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s;
+}
+
+const money = z.preprocess(toNumber, z.coerce.number().finite().min(0).max(100_000_000).transform((n) => Math.round(n * 100) / 100));
 const STATUS = ["PAGO", "PENDENTE", "AGENDADO"];
 
 const signup = z
