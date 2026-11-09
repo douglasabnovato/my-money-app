@@ -1,29 +1,27 @@
 > **Projeto de estudo (N1).** Estado conferido em 06/11/2026. Sem publicação no ar: rode localmente (seção "Inicializar o projeto"). Critérios em [docs/MVP.md](docs/MVP.md).
 
-## Estado e próximos passos (ciclo de 03/11/2026)
+## Estado e próximos passos (ciclo de 07/11/2026)
 
-Sem link publicado: o endereço antigo no Render dava 404 em 30/10/2026, e a decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
+Sem link publicado: o endereço antigo no Render não responde, e a decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
 
-**O que foi feito**
+**O que foi feito** (09/11/2026, na sprint `developer/sprint-2026-11-12`; a `main` recebe depois da revisão do responsável)
 
-- Ciclos por usuário, JWT sem hash da senha e front migrado para Vite (PR #10, #11).
-- Alerta alto da API tratado com o zod 4; `npm audit --omit=dev` sem alertas na API e no front (PR #13, #14).
-- Código antigo removido e licença MIT adicionada (PR #8, #9).
-- Painel mostra quanto sobrou dos créditos (taxa de poupança) e não quebra com resumo incompleto, com testes (PR #20).
-- CI passa a rodar também nos PRs para `developer/**` (PR #20).
+- Fluxo principal percorrido no navegador: registro, cadastro de ciclo, lista e painel (registro no `docs/MVP.md`, critério 3).
+- A API aceita valor com vírgula ("1500,50"), achado no percurso, com teste.
+- Painel e lista mostram "Carregando…" (#16); teste do cadastro de ciclo na tela (#15). Front: 13 testes; API: 10.
+- `docs/MVP.md`: 9 de 10 critérios aplicáveis; o parcial depende do responsável.
 
 **O que queremos fazer**
 
-- [#15](https://github.com/douglasabnovato/my-money-app/issues/15) Testar o cadastro de ciclo na tela.
-- [#16](https://github.com/douglasabnovato/my-money-app/issues/16) Mostrar o carregamento no painel e na lista.
+- [#19](https://github.com/douglasabnovato/my-money-app/issues/19) Mostrar a evolução mensal no painel.
+- Mensagens de validação da API em português e ordem dos títulos (issues do ciclo de 07/11).
 - [#17](https://github.com/douglasabnovato/my-money-app/issues/17) Proteger a `main` com PR e CI obrigatórios (responsável).
 - [#18](https://github.com/douglasabnovato/my-money-app/issues/18) Decidir a publicação no Render (responsável).
-- [#19](https://github.com/douglasabnovato/my-money-app/issues/19) Mostrar a evolução mensal no painel.
 
 **Onde está a documentação**
 
 - [docs/MVP.md](docs/MVP.md): estado de cada critério, com evidência e data.
-- [docs/PLANO-DE-ACAO.md](docs/PLANO-DE-ACAO.md): plano do ciclo, pesquisa e backlog.
+- [docs/PLANO-DE-ACAO.md](docs/PLANO-DE-ACAO.md): seção "Ciclo de 07/11/2026", com pesquisa e backlog.
 
 <h4 align="center"> 
 	🚧 My Money App 🚧
@@ -108,7 +106,7 @@ cd frontend && cp .env.example .env   # VITE_API_BASE=http://localhost:3003
 npm install && npm run dev            # :5173
 ```
 
-Testes: `npm test` em `backend/` (9) e `frontend/` (8). Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: `.github/workflows/ci.yml`, em push para a `main` e em PR para a `main` e `developer/**`.
+Testes: `npm test` em `backend/` (10) e `frontend/` (13). Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: `.github/workflows/ci.yml`, em push e PR para a `main` e `developer/**`.
 
 ### Instruções originais
 

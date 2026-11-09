@@ -57,3 +57,46 @@ Executado em 06/11/2026, nas branches `feature/2026-11-06` → `developer/sprint
 **Executado neste ciclo.** Taxa de poupança no painel; reducer que transforma resposta sem dados em zero; gatilho do CI para `developer/**`; régua N1 e critério 10 corrigidos no `MVP.md`; seção de estado no README.
 
 **Vira issue.** #15 a #19, listadas no README.
+
+## Ciclo de 07/11/2026
+
+> Executado em 09/11/2026. Nível N1. Sprint `developer/sprint-2026-11-12`, feature `feature/2026-11-07`.
+
+### Produto
+
+**Problema e público.** Quem controla finanças registra ciclos mensais de créditos e débitos e vê o saldo. Sem mudança.
+
+**Meta do ciclo.** Fechar os critérios 3 (fluxo principal) e 6 (falhas tratadas): percorrer o cadastro de ciclo na tela e mostrar o carregamento.
+
+**O que a pesquisa trouxe.**
+- Mensagens de carregamento entram no critério 4.1.3 do WCAG (mensagens de status): devem ser anunciadas sem receber foco, com `role="status"`; erro com `role="alert"`. Fonte: [WCAG 4.1.3, explicação](https://wcag.dock.codes/documentation/wcag-success-criteria/wcag413/) e [briefing sobre estados de carregamento](https://a11y-fundamentals.netlify.app/briefings/4.1).
+- Em português, o teclado do celular com `inputmode="decimal"` mostra vírgula, e campos numéricos variam entre navegadores; a recomendação é aceitar vírgula e ponto e converter no cliente e no servidor. Fontes: [Adobe React Aria, campo numérico internacional](https://react-aria.adobe.com/blog/how-we-internationalized-our-numberfield) e [W3C, formulários por localidade](https://www.w3.org/International/wiki/Locale-based_forms). O percurso na tela confirmou: "1500,50" era recusado pela API.
+
+**Backlog do ciclo (impacto × esforço).**
+
+| # | Item | Impacto | Esforço | Situação |
+|---|---|---|---|---|
+| 1 | API aceita valor com vírgula (achado no percurso) | Alto | Baixo | Feito |
+| 2 | Carregamento no painel e na lista (#16) | Médio | Baixo | Feito |
+| 3 | Teste do cadastro de ciclo na tela (#15) | Médio | Baixo | Feito |
+| 4 | CI em push para `developer/**` | Baixo | Baixo | Feito |
+| 5 | Mensagens de validação da API em português | Médio | Baixo | Issue |
+| 6 | Evolução mensal no painel (#19) | Médio | Médio | Próximo ciclo |
+
+**Fora do escopo.** Publicação (#18), importação bancária, metas.
+
+### Engenharia
+
+**Arquitetura.** Front React 18 + Redux (multi, thunk, promise) com Vite; API Express 5 + zod + Mongoose, com repositório em memória para testes e demonstração. As ações de busca agora despacham `*_REQUESTED` antes da promessa (redux-multi), e os reducers guardam `loading`. O esquema `money` da API converte "1.500,50" e "1500,50" antes de validar.
+
+**Riscos.** A conversão trata a vírgula como separador decimal e o ponto como milhar quando há vírgula; "1.500" sem vírgula continua 1,5. Sem proteção na `main` (#17).
+
+**Qualidade.** API: 10 testes (`npm test`). Front: 13 (`npx vitest run`) e build. Fluxo percorrido no navegador com axe.
+
+**Definição de pronto.** CI verde no PR para a sprint; `docs/MVP.md` e README atualizados; PR da sprint para a `main` com `revisao-responsavel`.
+
+### Plano de ação
+
+**Este ciclo executa.** Itens 1 a 4.
+
+**Vira issue.** Mensagens da API em português; título da tela em ordem (axe `heading-order`); #19 segue; #17 e #18 com o responsável.
