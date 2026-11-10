@@ -2,12 +2,12 @@
 
 > Revisto em 09/11/2026 (ciclo de 07/11/2026). **Nível: N1 (estudo).** Meta: N1. Testado no Windows com Node 24 e no CI com Node 22. Não houve teste com pessoas nem em aparelho real.
 
-**Resumo:** 9 de 10 aplicáveis atendidos
+**Resumo:** 10 de 10 aplicáveis atendidos
 **Finalizado:** sim
 
-Régua N1: os critérios 5 e 7 são "Não se aplica (N1)" e saem do denominador. Antes deste ciclo: 7 de 10. O único parcial (10) depende do responsável e tem issue com `depende-do-responsavel` (#17). O ciclo ainda não está na `main`: espera a revisão do responsável.
+Régua N1: os critérios 5 e 7 são "Não se aplica (N1)" e saem do denominador. Antes deste ciclo: 7 de 10. O 10 passou a "Atende" em 10/11/2026, com a `main` protegida (#17). O ciclo ainda não está na `main`: espera a revisão do responsável.
 
-| # | Critério | Como verificar | Situação (09/11/2026) |
+| # | Critério | Como verificar | Situação (09/11/2026; critério 10 revisto em 10/11/2026) |
 |---|---|---|---|
 | 1 | Problema e público claros | Dá para explicar em uma frase | Atende: quem controla finanças registra ciclos de créditos e débitos. |
 | 2 | Hipótese a validar | Existe uma aposta escrita, com meta | Atende: seção "Hipótese"; ainda sem validação com pessoas. |
@@ -18,7 +18,7 @@ Régua N1: os critérios 5 e 7 são "Não se aplica (N1)" e saem do denominador.
 | 7 | Desempenho aceitável | LCP de até 2,5 s no celular | Não se aplica (N1): sem publicação; decisão em #18. |
 | 8 | Acessibilidade básica | axe e teclado | Atende: axe-core 4.10 no painel em 09/11: só `heading-order` (moderado); rótulos nos campos do ciclo; foco visível conferido em 06/11. |
 | 9 | Segurança e conformidade | Riscos decididos | Atende: `npm audit --omit=dev` sem alertas na API e no front em 06/11/2026 (zod 4, PR #13); sem dependência nova neste ciclo. |
-| 10 | Entrega confiável | CI verde antes de entrar na principal | Parcial (depende do responsável, #17): CI verde nos PRs; agora roda também em push para `developer/**`; a principal não tem proteção. |
+| 10 | Entrega confiável | CI verde antes de entrar na principal | Atende: `gh api repos/douglasabnovato/my-money-app/rulesets`, em 10/11/2026: ruleset `principal-protegida` ativo (exige PR, bloqueia force push e exclusão); o workflow `CI` roda nos PRs e em push para `main` e `developer/**` (#17). |
 | 11 | Testes dos fluxos críticos | Testes automatizados no CI | Atende: API 10 testes (`npm test`, 09/11), front 13 (`npx vitest run`, 09/11), build no CI. |
 | 12 | Documentação honesta | O README ensina a rodar | Atende: README com o ciclo de 07/11 e o modo em memória. |
 
