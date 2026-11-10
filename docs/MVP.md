@@ -1,10 +1,48 @@
 # MVP — my-money-app
 
+> Revisto em 09/11/2026 (ciclo de 07/11/2026). **Nível: N1 (estudo).** Meta: N1. Testado no Windows com Node 24 e no CI com Node 22. Não houve teste com pessoas nem em aparelho real.
+
+**Resumo:** 10 de 10 aplicáveis atendidos
+**Finalizado:** sim
+
+Régua N1: os critérios 5 e 7 são "Não se aplica (N1)" e saem do denominador. Antes deste ciclo: 7 de 10. O 10 passou a "Atende" em 10/11/2026, com a `main` protegida (#17). O ciclo ainda não está na `main`: espera a revisão do responsável.
+
+| # | Critério | Como verificar | Situação (09/11/2026; critério 10 revisto em 10/11/2026) |
+|---|---|---|---|
+| 1 | Problema e público claros | Dá para explicar em uma frase | Atende: quem controla finanças registra ciclos de créditos e débitos. |
+| 2 | Hipótese a validar | Existe uma aposta escrita, com meta | Atende: seção "Hipótese"; ainda sem validação com pessoas. |
+| 3 | Fluxo principal completo | Uma pessoa conclui sem ajuda | Atende: em 09/11, API com `MONGODB_URI=memory` (`node src/server.js`) e front com `npx vite`, percorri no navegador embutido do app: registro → Ciclos de Pagamentos → Incluir (nome, mês, ano, crédito 4000, débito "1500,50" pago) → resumo do formulário R$ 2.499,50 → "Operação realizada com sucesso" → ciclo na lista → painel com R$ 4.000,00, R$ 1.500,50, R$ 2.499,50 e "Sobraram 62% dos créditos". O percurso achou um erro (valor com vírgula era recusado pela API com 400), corrigido com teste. Teste de tela: `frontend/src/__tests__/ciclo.test.jsx` (#15). |
+| 4 | Escopo enxuto | O que não entra está registrado | Atende: seção "Fora do MVP". |
+| 5 | Medição de uso | A métrica principal é coletada | Não se aplica (N1): projeto de estudo sem coleta de uso. |
+| 6 | Falhas tratadas | Erro, vazio e carregamento têm resposta clara | Atende: painel e lista mostram "Carregando…" com `role="status"`; vazio ("Nenhum ciclo cadastrado", "Cadastre créditos") só depois de carregar; erro de rede com `role="alert"`; token inválido volta ao login (visto em 09/11). `npx vitest run` em 09/11: 13 de 13 (#16). |
+| 7 | Desempenho aceitável | LCP de até 2,5 s no celular | Não se aplica (N1): sem publicação; decisão em #18. |
+| 8 | Acessibilidade básica | axe e teclado | Atende: axe-core 4.10 no painel em 09/11: só `heading-order` (moderado); rótulos nos campos do ciclo; foco visível conferido em 06/11. |
+| 9 | Segurança e conformidade | Riscos decididos | Atende: `npm audit --omit=dev` sem alertas na API e no front em 06/11/2026 (zod 4, PR #13); sem dependência nova neste ciclo. |
+| 10 | Entrega confiável | CI verde antes de entrar na principal | Atende: `gh api repos/douglasabnovato/my-money-app/rulesets`, em 10/11/2026: ruleset `principal-protegida` ativo (exige PR, bloqueia force push e exclusão); o workflow `CI` roda nos PRs e em push para `main` e `developer/**` (#17). |
+| 11 | Testes dos fluxos críticos | Testes automatizados no CI | Atende: API 10 testes (`npm test`, 09/11), front 13 (`npx vitest run`, 09/11), build no CI. |
+| 12 | Documentação honesta | O README ensina a rodar | Atende: README com o ciclo de 07/11 e o modo em memória. |
+
+## Hipótese (proposta)
+
+Praticar React com Redux: criar conta e ver o painel em menos de 1 minuto.
+
+## Fora do MVP
+
+Importação bancária e metas.
+
+## Neste ciclo (07/11/2026)
+
+Carregamento no painel e na lista (#16), teste do cadastro de ciclo na tela (#15), API aceita valor com vírgula, CI em push para `developer/**`, fluxo percorrido na tela. Detalhes em [PLANO-DE-ACAO.md](PLANO-DE-ACAO.md), seção "Ciclo de 07/11/2026".
+
+## Histórico
+
+### Estado em 06/11/2026 (ciclo de 03/11/2026)
+
 > Criado em 02/11/2026. Meta: N1 (estudo). Testado no Windows, com Node 24, na cópia de `main`. Não houve teste com pessoas nem em aparelho real.
 
 **Nível:** N1 (estudo). **Resumo em 06/11/2026:** 7 de 10 critérios aplicáveis atendem (1, 2, 4, 8, 9, 11, 12); 3 parciais (3, 6, 10); 5 e 7 não se aplicam (N1). **Finalizado: não.** Faltam os critérios 3 e 6 (#15, #16), que o código resolve; o 10 depende do responsável (#17).
 
-## 1. Critérios: 7 de 10 aplicáveis atendidos
+#### 1. Critérios: 7 de 10 aplicáveis atendidos
 
 | # | Critério | Como verificar | Situação |
 |---|---|---|---|
@@ -21,19 +59,19 @@
 | 11 | Testes dos fluxos críticos | Testes automatizados no CI | Atende: Testes automatizados rodam no CI. |
 | 12 | Documentação honesta | O README ensina a rodar | Atende: Comandos conferidos com o `package.json`; aviso de estudo no README. |
 
-## 2. Hipótese (proposta)
+#### 2. Hipótese (proposta)
 
 Praticar React com Redux: criar conta e ver o painel em menos de 1 minuto.
 
-## 3. Fora do MVP
+#### 3. Fora do MVP
 
 Importação bancária e metas.
 
-## 4. Neste ciclo
+#### 4. Neste ciclo
 
 Corrige o contraste do botão principal e o foco visível, e atualiza dependências.
 
-## 5. Revisão de 06/11/2026 (ciclo de 03/11/2026)
+#### 5. Revisão de 06/11/2026 (ciclo de 03/11/2026)
 
 - Régua N1: critérios 5 e 7 passam a "Não se aplica" e saem do denominador.
 - Critério 10 vai de "Atende" para "Parcial", porque a principal não tem proteção.
