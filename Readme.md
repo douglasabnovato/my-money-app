@@ -9,13 +9,12 @@ Sem link publicado: o endereço antigo no Render não responde, e a decisão de 
 - Fluxo principal percorrido no navegador: registro, cadastro de ciclo, lista e painel (registro no `docs/MVP.md`, critério 3).
 - A API aceita valor com vírgula ("1500,50"), achado no percurso, com teste.
 - Painel e lista mostram "Carregando…" (#16); teste do cadastro de ciclo na tela (#15). Front: 13 testes; API: 10.
-- `docs/MVP.md`: 9 de 10 critérios aplicáveis; o parcial depende do responsável.
+- `docs/MVP.md`: 10 de 10 critérios aplicáveis desde 10/11/2026, com a `main` protegida pelo ruleset `principal-protegida` ([#17](https://github.com/douglasabnovato/my-money-app/issues/17)).
 
 **O que queremos fazer**
 
 - [#19](https://github.com/douglasabnovato/my-money-app/issues/19) Mostrar a evolução mensal no painel.
 - Mensagens de validação da API em português e ordem dos títulos (issues do ciclo de 07/11).
-- [#17](https://github.com/douglasabnovato/my-money-app/issues/17) Proteger a `main` com PR e CI obrigatórios (responsável).
 - [#18](https://github.com/douglasabnovato/my-money-app/issues/18) Decidir a publicação no Render (responsável).
 
 **Onde está a documentação**
