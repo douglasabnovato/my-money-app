@@ -25,7 +25,8 @@ button {
 .tab-button { border: 0; }
 .login-logo { font-size: 35px; margin-top: 0; }
 .skin-blue .main-header .logo { background-color: #245b82; }
-.small-box .inner h3 { font-size: 30px; }
+/* Valor em destaque da caixa do painel, no lugar do h3 que pulava nível (#24) */
+.small-box .inner .small-box-valor { font-size: 30px; font-weight: bold; margin: 0 0 10px 0; white-space: nowrap; padding: 0; }
 .main-footer { position: static; }
 /* Contraste WCAG AA sobre o tema skin-blue do AdminLTE */
 .skin-blue .main-header .navbar { background-color: #245b82; }
