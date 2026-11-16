@@ -1,6 +1,8 @@
 # Deploy · My Money
 
-Plano de ação para publicar a API e o front em hospedagem gratuita.
+Plano de ação para publicar a API e o front em hospedagem gratuita. Revisto em 16/11/2026: o código já está pronto (`render.yaml`, CI ativo, código antigo removido); faltam só os passos de conta, que são do responsável ([#18](https://github.com/douglasabnovato/my-money-app/issues/18)).
+
+**Estado em 16/11/2026:** `https://my-money-web.onrender.com` responde 404 com `x-render-routing: no-server` (nenhum serviço com esse nome). `https://my-money-api.onrender.com/health` responde 404 com `x-render-origin-server: Render`: o nome pode estar em uso por outro serviço, talvez de outra conta. Se o Render criar a API com outro endereço (ex.: `my-money-api-xxxx`), siga o passo 5 da Etapa 2.
 
 ## 1. Desafio
 
@@ -19,13 +21,11 @@ Colocar no ar, sem custo, o controle de ciclos de pagamento (API Express 5 + Mon
 
 ### Banco: um cluster M0 para todos os apps
 
-Recomendação para o lote (my-money-app, aircnc e instagram-feed): **um único cluster M0**, com **um usuário e um banco por app**.
+Padrão do portfólio: **o cluster M0 atual**, com **um usuário e um banco por app** (como no instagram-feed e no aircnc). Para este app:
 
 | App | Usuário do Atlas | Banco (na URI) | Permissão |
 |---|---|---|---|
-| my-money-app | `mymoney-app` | `mymoney` | `readWrite` só em `mymoney` |
-| aircnc | `aircnc-app` | `aircnc` | `readWrite` só em `aircnc` |
-| instagram-feed | `instarocket-app` | `instarocket` | `readWrite` só em `instarocket` |
+| my-money-app | `mymoney-app` | `mymoney` | `readWrite` só em `mymoney` (Database = `mymoney`, Collection vazia) |
 
 - Assim, uma senha vazada afeta só um app, e cada um pode ser trocado sem mexer nos outros.
 - **Network Access**: `0.0.0.0/0`. O Render Free não tem IP fixo; a proteção fica na senha forte de cada usuário.
@@ -42,8 +42,7 @@ Recomendação para o lote (my-money-app, aircnc e instagram-feed): **um único 
 | `VITE_API_BASE` fixado em `https://my-money-api.onrender.com` | `render.yaml` | O front já nasce apontando para a API |
 | `NODE_ENV=production` na API | `render.yaml` | Modo de produção do Express |
 | `AUTH_SECRET` com `generateValue: true` (já existia) | `render.yaml` | O Render gera um segredo novo e aleatório: todos os tokens antigos deixam de valer |
-| CI no Node 22 | `ci/github-actions-ci.yml` | Mesma versão do Render |
-| Seção "Em produção" | `Readme.md` | URL e link para este guia |
+| CI no Node 22, com `e2e` e `auditoria` | `.github/workflows/ci.yml` | Mesma versão do Render; o fluxo principal é testado no navegador antes do merge |
 
 Não foi preciso regra de rewrite no site estático: o front usa `HashRouter` (endereços como `/#/billingCycles`), então toda navegação cai no `index.html`.
 
@@ -61,61 +60,52 @@ Não foi preciso regra de rewrite no site estático: o front usa `HashRouter` (e
 
 ## 3. Solução (passo a passo)
 
-### Etapa 0 · Segredos e dados antigos
+Tudo abaixo é do responsável: conta, segredo e serviço. Nenhum valor secreto vai para o repositório.
 
-1. **Segredo novo**: não reaproveite nenhum segredo antigo. No Render, o `AUTH_SECRET` é gerado sozinho pelo Blueprint (`generateValue`). Para rodar localmente, gere outro:
-   `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
-2. O antigo `backend/src/.env.file` sai do repositório na Etapa 1; se ele tiver algum segredo usado em outro lugar, troque lá também.
-3. **Dados antigos** (só se você for usar um banco que já tem ciclos da versão antiga): depois de criar a sua conta no app publicado, rode no seu computador, com `backend/.env` apontando para esse banco:
-   `cd backend && npm run claim-orphans -- seu@email.com`
-   Em banco novo e vazio, pule este passo.
+### Etapa 0 · Conferir o código localmente (opcional)
 
-### Etapa 1 · Atlas e validação local (Git Bash)
+1. `git clone https://github.com/douglasabnovato/my-money-app && cd my-money-app`
+2. `cd backend && npm ci && npm test` (esperado em 16/11/2026: 11 testes passando).
+3. `cd ../frontend && npm ci && npm test && npm run build` (esperado: 13 testes passando e a pasta `dist/` criada).
+4. `npx playwright install chromium && npm run test:e2e` (esperado: 3 testes passando; sobe sozinho a API em memória).
 
-1. No **MongoDB Atlas**, use (ou crie) o cluster **M0** do lote. Em **Database Access → Add New Database User**: usuário `mymoney-app`, senha gerada, **Specific Privileges** → `readWrite` no banco `mymoney`.
-2. Em **Network Access → Add IP Address → Allow Access from Anywhere** (`0.0.0.0/0`), se ainda não existir.
-3. Em **Database → Connect → Drivers**, copie a URI e acrescente `/mymoney` antes do `?`.
-4. `cd /c/ambiente-projeto/ser-mvp/my-money-app`
-5. Remover os arquivos substituídos no ciclo MVP:
-   ```bash
-   git rm backend/src/loader.js backend/src/.env.file
-   git rm -r backend/src/config backend/src/api
-   git rm frontend/src/index.js frontend/src/registerServiceWorker.js frontend/src/common/template/jquery.js frontend/public/index.html
-   git rm -r frontend/src/Dashboard2
-   ```
-6. `cd backend && cp .env.example .env` e preencher `MONGODB_URI` (a URI do passo 3) e `AUTH_SECRET` (o valor gerado na Etapa 0).
-7. `npm ci && npm test` (esperado: 9 testes passando).
-8. `npm run dev` e abrir `http://localhost:3003/health` (esperado: `{"status":"ok"}`). Encerrar com Ctrl+C.
-9. `cd ../frontend && npm ci && npm test && npm run build` (esperado: 4 testes passando e a pasta `dist/` criada).
+### Etapa 1 · Banco no MongoDB Atlas
 
-### Etapa 2 · Subir para o GitHub (branch `main`)
+1. Entrar em **cloud.mongodb.com** e abrir o projeto do **cluster M0 atual** do portfólio. Não crie outro cluster: um projeto aceita um só M0.
+2. **Database Access → Add New Database User**:
+   - Authentication Method: **Password**.
+   - Username: `mymoney-app`.
+   - Password: botão **Autogenerate Secure Password** (só letras e números). Copie a senha para um lugar seguro; não cole em issue nem em arquivo do repositório.
+   - Database User Privileges: **Specific Privileges → Add Specific Privilege** → Role `readWrite`, Database `mymoney`, Collection em branco.
+   - **Add User**.
+3. **Network Access → Add IP Address → Allow Access from Anywhere** (`0.0.0.0/0`) → **Confirm**, se ainda não existir. O Render Free não tem IP fixo.
+4. **Database → Connect → Drivers**: copiar a URI e acrescentar `/mymoney` antes do `?`:
+   `mongodb+srv://mymoney-app:<senha>@<seu-cluster>.mongodb.net/mymoney?retryWrites=true&w=majority`
+5. Dados antigos: só se você usar um banco que já tem ciclos da versão antiga. Depois de criar a sua conta no app publicado, rode no seu computador, com `backend/.env` apontando para esse banco: `cd backend && npm run claim-orphans -- <seu e-mail>`. Em banco novo, pule.
 
-1. `cd /c/ambiente-projeto/ser-mvp/my-money-app`
-2. Ativar o CI: `mkdir -p .github/workflows && mv ci/github-actions-ci.yml .github/workflows/ci.yml && rmdir ci`
-3. `git status` (não podem aparecer `.env`, `node_modules/` nem `dist/`)
-4. `git add -A`
-5. `git commit -m "feat(deploy): Node 22, URLs do Render fixadas no blueprint, CI ativo e guia de deploy"`
-6. `git push origin main`
-7. No GitHub, aba **Actions**: os jobs `backend` e `frontend` precisam ficar verdes.
+### Etapa 2 · Serviços no Render (Blueprint)
 
-### Etapa 3 · Criar os serviços no Render
+1. Entrar em **dashboard.render.com** com a conta do GitHub e autorizar o repositório `douglasabnovato/my-money-app`.
+2. **New → Blueprint** → escolher `douglasabnovato/my-money-app`, branch `main` → **Connect**.
+3. O Render lista `my-money-api` (Web Service, Free) e `my-money-web` (Static Site). Ele pede um único valor: **`MONGODB_URI`** → colar a URI da Etapa 1. O `AUTH_SECRET` é gerado sozinho (`generateValue`).
+4. **Apply**. Acompanhar **Logs** da API até aparecer `My Money API na porta 10000` (3 a 5 min).
+5. Se o endereço da API ou do site não for o previsto (o Render acrescenta um sufixo quando o nome está em uso):
+   - na API → **Environment** → `CORS_ORIGINS` = endereço real do site → **Save Changes**;
+   - no site → **Environment** → `VITE_API_BASE` = endereço real da API (sem barra no final) → **Save, rebuild, and deploy** (a variável do Vite entra no build);
+   - depois, corrigir os dois valores no `render.yaml` por PR, para o Blueprint não voltar ao valor antigo.
 
-1. Entrar em **render.com** com a conta do GitHub e autorizar o repositório `my-money-app`.
-2. **New → Blueprint** e escolher `douglasabnovato/my-money-app`, branch `main`.
-3. O Render lista `my-money-api` (Free) e `my-money-web` (Static). Ele pede um único valor: **`MONGODB_URI`** → colar a URI da Etapa 1.
-4. **Apply**. Acompanhar os **Logs** da API até aparecer `My Money API na porta 10000` (3 a 5 min).
-5. Se o Render avisar que um nome já existe e usar outro endereço, corrija `CORS_ORIGINS` (na API) e `VITE_API_BASE` (no web) em **Environment**, e depois **Manual Deploy** no web (a variável do Vite entra no build).
+### Etapa 3 · Conferir no ar
 
-### Etapa 4 · Conferir no ar
-
-1. `https://my-money-api.onrender.com/health` responde `{"status":"ok"}`.
+1. `curl -s https://my-money-api.onrender.com/health` responde `{"status":"ok"}` (ou o endereço real).
 2. `https://my-money-web.onrender.com` abre a tela de login (se der erro de rede, a API está acordando: aguarde 1 min).
-3. Criar uma conta nova, cadastrar um ciclo com um crédito e um débito e ver o painel somar os valores em reais.
-4. Abrir outra janela anônima, criar outra conta e confirmar que o ciclo da primeira não aparece.
+3. Criar uma conta com dados fictícios (`@empresa.test`), cadastrar um ciclo com um crédito e um débito e ver o painel somar os valores em reais.
+4. Abrir uma janela anônima, criar outra conta e confirmar que o ciclo da primeira não aparece.
 5. Recarregar a página (F5) em `/#/billingCycles`: continua na mesma tela.
-6. No DevTools (aba Network), as chamadas vão para `https://my-money-api.onrender.com` sem erro de CORS.
+6. No DevTools (aba Network), as chamadas vão para a API sem erro de CORS.
 
-### Etapa 5 · Fechar
+### Etapa 4 · Fechar
 
-1. Se as URLs reais forem diferentes das previstas, corrigir no `Readme.md`, commit e push.
-2. No GitHub, **About → Website**: colar `https://my-money-web.onrender.com`.
+1. Comentar na [#18](https://github.com/douglasabnovato/my-money-app/issues/18) a decisão e os endereços reais, com o código HTTP de cada um.
+2. Se os endereços forem diferentes dos previstos, corrigir `render.yaml` e `Readme.md` por PR.
+3. No GitHub, **About → Website**: colar o endereço do site.
+4. Em N1 a publicação não é obrigatória. Se decidir não publicar, registre na #18 e deixe este guia como referência.
