@@ -18,11 +18,11 @@ describe('format', () => {
 describe('reducers', () => {
   it('erro de rede no resumo mantém valores e sinaliza falha', () => {
     const state = dashboardReducer(undefined, { type: 'BILLING_SUMMARY_FETCHED', error: true, payload: new Error('x') })
-    expect(state).toEqual({ summary: { credit: 0, debt: 0 }, error: true })
+    expect(state).toEqual({ summary: { credit: 0, debt: 0 }, error: true, loading: false })
   })
   it('lista de ciclos carregada limpa o erro', () => {
     const state = billingReducer({ list: [], error: true }, { type: 'BILLING_CYCLES_FETCHED', payload: { data: [{ _id: '1' }] } })
-    expect(state).toEqual({ list: [{ _id: '1' }], error: false })
+    expect(state).toEqual({ list: [{ _id: '1' }], error: false, loading: false })
   })
 })
 
@@ -41,7 +41,7 @@ describe('consolidado', () => {
   })
   it('resposta sem dados no resumo não quebra o painel', () => {
     const state = dashboardReducer(undefined, { type: 'BILLING_SUMMARY_FETCHED', payload: {} })
-    expect(state).toEqual({ summary: { credit: 0, debt: 0 }, error: false })
+    expect(state).toEqual({ summary: { credit: 0, debt: 0 }, error: false, loading: false })
   })
 })
 

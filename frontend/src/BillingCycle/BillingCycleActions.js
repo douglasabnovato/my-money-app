@@ -9,12 +9,13 @@ import { showTabs, selectTab } from "../common/Tab/TabActions"
 const BASE_URL = consts.API_URL
 const INITIAL_VALUES = {credits: [{}], debts: [{}]}
 
+/* Marca o carregamento antes do pedido (redux-multi) e entrega a lista depois (redux-promise) */
 export function getList(){
     const request = axios.get(`${BASE_URL}/billingCycles`) 
-    return {
-        type: "BILLING_CYCLES_FETCHED",
-        payload: request
-    }
+    return [
+        { type: "BILLING_CYCLES_REQUESTED" },
+        { type: "BILLING_CYCLES_FETCHED", payload: request }
+    ]
 }
 
 export function create(values){ 
@@ -71,7 +72,7 @@ export function init(){
     return [
         showTabs("tabList", "tabCreate"),
         selectTab("tabList"),
-        getList(),
+        ...getList(),
         initialize("billingCycleForm", INITIAL_VALUES)
     ]
     

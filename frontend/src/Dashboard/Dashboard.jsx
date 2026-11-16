@@ -17,7 +17,7 @@ export function fraseTaxa({ taxa, saldo }) {
     return `Sobraram ${formatPercent(taxa)} dos créditos.`
 }
 
-class Dashboard extends Component {
+export class Dashboard extends Component {
 
     componentDidMount() {
         this.props.getSummary()
@@ -26,7 +26,7 @@ class Dashboard extends Component {
     render() {
         const resumo = consolidar(this.props.summary)
         const { credit, debt, saldo } = resumo
-        const { error } = this.props
+        const { error, loading } = this.props
         return (
             <div> 
                 <ContentHeader title='Dashboard' small='Versão 1.0' />
@@ -40,14 +40,14 @@ class Dashboard extends Component {
                         <ValueBox cols='12 4' color='blue' icon='money'
                             value={formatBRL(saldo)} text='Valor Consolidado' />
                     </Row> 
-                    <p className='lead' role='status'>{fraseTaxa(resumo)}</p>
+                    <p className='lead' role='status'>{loading ? 'Carregando o resumo…' : fraseTaxa(resumo)}</p>
                 </Content> 
             </div>
         )
     }
 }
 
-const mapStateToProps = state => ({ summary: state.dashboard.summary, error: state.dashboard.error })
+const mapStateToProps = state => ({ summary: state.dashboard.summary, error: state.dashboard.error, loading: state.dashboard.loading })
 const mapDispatchToProps = dispatch => bindActionCreators({getSummary}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
