@@ -14,7 +14,7 @@ Sem link publicado: em 16/11/2026, `my-money-web.onrender.com` e `my-money-api.o
 
 **O que queremos fazer**
 
-- [#29](https://github.com/douglasabnovato/my-money-app/issues/29) Ligar os alertas do Dependabot (responsável).
+- [#29](https://github.com/douglasabnovato/my-money-app/issues/29) Alertas do Dependabot (responsável): ligados em 16/11/2026. Os 4 abertos (Mongoose 8.24.4 da `main`) já estão corrigidos na sprint-19 e fecham com o merge do PR [#36](https://github.com/douglasabnovato/my-money-app/pull/36).
 - [#30](https://github.com/douglasabnovato/my-money-app/issues/30) Exigir o check `e2e` no ruleset da `main` (responsável).
 - [#31](https://github.com/douglasabnovato/my-money-app/issues/31) Testar o fluxo principal em largura de celular.
 - [#32](https://github.com/douglasabnovato/my-money-app/issues/32) Testar alterar e excluir ciclo no navegador.
