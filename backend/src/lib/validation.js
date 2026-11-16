@@ -13,6 +13,13 @@ function toNumber(v) {
 const money = z.preprocess(toNumber, z.coerce.number().finite().min(0).max(100_000_000).transform((n) => Math.round(n * 100) / 100));
 const STATUS = ["PAGO", "PENDENTE", "AGENDADO"];
 
+/* Inteiro obrigatório: campo vazio responde "campo obrigatório", e não "a partir de 1" (o coerce faria "" virar 0) */
+const inteiro = (min, max) =>
+  z.preprocess(
+    (v) => (v === "" || v === null ? undefined : v),
+    z.unknown().refine((v) => v !== undefined, { message: "campo obrigatório", abort: true }).pipe(z.coerce.number().int().min(min).max(max))
+  );
+
 const signup = z
   .object({
     name: z.string().trim().min(2).max(80),
@@ -35,8 +42,8 @@ const login = z.object({
 
 const cycle = z.object({
   name: z.string().trim().min(1).max(80),
-  month: z.coerce.number().int().min(1).max(12),
-  year: z.coerce.number().int().min(1970).max(2100),
+  month: inteiro(1, 12),
+  year: inteiro(1970, 2100),
   credits: z.array(z.object({ name: z.string().trim().min(1).max(80), value: money })).max(200).default([]),
   debts: z
     .array(
@@ -64,10 +71,12 @@ function ptBR(issue) {
       return issue.input === undefined ? "campo obrigatório" : "informe um valor válido";
     case "too_small":
       if (texto) return issue.minimum <= 1 ? "preencha este campo" : `use pelo menos ${issue.minimum} caracteres`;
-      return issue.origin === "array" ? "lista vazia" : `informe um valor a partir de ${issue.minimum}`;
+      if (issue.origin === "array") return "lista vazia";
+      return issue.inclusive === false ? `informe um valor maior que ${issue.minimum}` : `informe um valor a partir de ${issue.minimum}`;
     case "too_big":
       if (texto) return `use no máximo ${issue.maximum} caracteres`;
-      return issue.origin === "array" ? `no máximo ${issue.maximum} linhas` : `informe um valor até ${issue.maximum}`;
+      if (issue.origin === "array") return `no máximo ${issue.maximum} linhas`;
+      return issue.inclusive === false ? `informe um valor menor que ${issue.maximum}` : `informe um valor até ${issue.maximum}`;
     case "invalid_format":
       return issue.format === "email" ? "informe um e-mail válido" : "formato inválido";
     case "invalid_value":

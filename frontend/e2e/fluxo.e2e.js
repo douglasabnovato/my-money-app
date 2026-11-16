@@ -46,7 +46,7 @@ test('cria conta, cadastra um ciclo com valor em reais e vê o painel somar', as
   await page.getByLabel('Débitos: nome da linha 1').fill('Aluguel')
   await page.getByLabel('Débitos: valor da linha 1').fill('1500,50')
   await page.getByLabel('Status da linha 1').selectOption('PAGO')
-  await expect(page.locator('.box-body')).toContainText(/R\$\s2\.499,50/)
+  await expect(page.locator('#tabCreate .box-body')).toContainText(/R\$\s2\.499,50/)
   await semViolacoes(page)
 
   /* Um POST real do navegador para a API: pega erro de origem e de CORS */
@@ -57,10 +57,11 @@ test('cria conta, cadastra um ciclo com valor em reais e vê o painel somar', as
   await expect(page.getByRole('button', { name: 'Alterar Novembro' })).toBeVisible()
   await semViolacoes(page)
 
-  await page.getByRole('link', { name: 'Dashboard' }).click()
-  await expect(page.getByText(/R\$\s4\.000,00/)).toBeVisible()
-  await expect(page.getByText(/R\$\s1\.500,50/)).toBeVisible()
-  await expect(page.getByText(/R\$\s2\.499,50/)).toBeVisible()
+  await page.getByRole('complementary', { name: 'Menu principal' }).getByRole('link', { name: 'Dashboard' }).click()
+  const painel = page.locator('#conteudo')
+  await expect(painel.locator('.small-box.bg-green')).toContainText(/R\$\s4\.000,00/)
+  await expect(painel.locator('.small-box.bg-red')).toContainText(/R\$\s1\.500,50/)
+  await expect(painel.locator('.small-box.bg-blue')).toContainText(/R\$\s2\.499,50/)
   await expect(page.getByRole('status').filter({ hasText: /Sobraram 62\s?% dos créditos/ })).toBeVisible()
   await semViolacoes(page)
 })
@@ -88,7 +89,10 @@ test('cria conta só com o teclado, com foco visível em cada campo', async ({ p
 
   /* O botão vira "Já é cadastrado?" e o foco fica nele; Shift+Tab volta ao primeiro campo (Nome) */
   await expect(page.getByRole('button', { name: 'Já é cadastrado? Entrar aqui!' })).toBeFocused()
-  for (let i = 0; i < 5; i++) await page.keyboard.press('Shift+Tab')
+  /* Shift+Tab até o campo Nome, com limite, sem depender do número exato de paradas */
+  for (let i = 0; i < 10 && !(await page.locator('#auth-name').evaluate(el => el === document.activeElement)); i++) {
+    await page.keyboard.press('Shift+Tab')
+  }
   const campos = [['auth-name', nome], ['auth-email', email], ['auth-password', senha], ['auth-confirm_password', senha]]
   for (const [id, valor] of campos) {
     await expect(page.locator(`#${id}`)).toBeFocused()
