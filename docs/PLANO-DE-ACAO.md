@@ -100,3 +100,50 @@ Executado em 06/11/2026, nas branches `feature/2026-11-06` → `developer/sprint
 **Este ciclo executa.** Itens 1 a 4.
 
 **Vira issue.** Mensagens da API em português; título da tela em ordem (axe `heading-order`); #19 segue; #17 e #18 com o responsável.
+
+## Ciclo de 16/11/2026
+
+> Executado em 16/11/2026. Nível N1. Sprint `developer/sprint-2026-11-19` (criada a partir da `main` depois do merge do PR #27), feature `feature/2026-11-16`.
+
+### Produto
+
+**Problema e público.** Quem controla finanças registra ciclos mensais de créditos e débitos e vê o saldo. Sem mudança.
+
+**Meta do ciclo.** Deixar o `docs/MVP.md` honesto com a régua atual: o critério 3 em N1 com interface exige teste Playwright no navegador, no CI, e o critério 8 exige axe dentro desse teste. Os dois estavam "Atende" só com percurso manual e jsdom.
+
+**O que a pesquisa trouxe.**
+- O Playwright recomenda o `@axe-core/playwright` para rodar o axe dentro do teste de ponta a ponta, filtrando por tags WCAG, e alerta que a varredura automática não substitui a revisão manual. Fonte: [Playwright, Accessibility testing](https://playwright.dev/docs/accessibility-testing).
+- Os títulos devem seguir a hierarquia sem pular nível: um `h1` por tela e, abaixo dele, `h2`. Valor em destaque não é título. Fonte: [W3C WAI, Headings](https://www.w3.org/WAI/tutorials/page-structure/headings/). É a causa do `heading-order` do #24.
+- O Mongoose 8 até a 8.24.6 tem quatro avisos altos (filtro de conexão sem `sanitizeFilter`, poluição de protótipo). A correção está na mesma versão maior. Fonte: [GHSA-gg4r-jv3p-qx3c](https://github.com/advisories/GHSA-gg4r-jv3p-qx3c) e `npm audit --omit=dev` em 16/11/2026.
+- O Blueprint do Render cria a API e o site estático pelo `render.yaml`; o nome do serviço pode já existir em outra conta, e o endereço real muda. Fonte: [Render, Blueprint YAML Reference](https://render.com/docs/blueprint-spec). Em 16/11, `my-money-api.onrender.com` respondeu 404 com `x-render-origin-server: Render`, e `my-money-web.onrender.com` com `x-render-routing: no-server`.
+
+**Backlog do ciclo (impacto × esforço).**
+
+| # | Item | Impacto | Esforço | Situação |
+|---|---|---|---|---|
+| 1 | Mongoose 8.24.9 e patches de produção (audit alto) | Alto | Baixo | Este ciclo |
+| 2 | MVP honesto: critérios 3, 8 e 9 contra a régua | Alto | Baixo | Este ciclo |
+| 3 | Teste Playwright do fluxo principal com axe e job `e2e` no CI | Alto | Médio | Este ciclo |
+| 4 | Ordem dos títulos (#24), conferida pelo axe no e2e | Médio | Baixo | Este ciclo |
+| 5 | Código morto do CRA e CI duplicado em `ci/` | Baixo | Baixo | Este ciclo |
+| 6 | `DEPLOY.md` atualizado (passos antigos já feitos) | Médio | Baixo | Este ciclo |
+| 7 | Mensagens da API em português (#23), com teste na API e no e2e | Médio | Baixo | Este ciclo |
+| 8 | Pedidos simultâneos (#25), evolução mensal (#19) | Médio | Médio | Issues |
+
+**Fora do escopo.** Publicação (#18, do responsável), importação bancária, metas, React 19 e Redux 5 (versões maiores).
+
+### Engenharia
+
+**Arquitetura.** Sem mudança: front React 18 + Redux com Vite; API Express 5 + zod + Mongoose, com repositório em memória (`MONGODB_URI=memory`). O e2e sobe a API em memória e o Vite pelo `webServer` do Playwright, com portas próprias.
+
+**Riscos.** O Dependabot está desligado (API 403); o `npm audit` é a única fonte, e o critério 9 fica "Parcial" (regra em decisão na [engenharia#33](https://github.com/douglasabnovato/engenharia/issues/33)). O app não tem tema escuro próprio: o axe roda só no tema claro. O nome `my-money-api` no Render pode estar ocupado.
+
+**Qualidade.** API `npm test`, front `npm test` e build, e2e `npm run test:e2e` com axe (WCAG A e AA e `heading-order`) e teste de teclado. Auditoria de produção num job à parte.
+
+**Definição de pronto.** CI verde no PR para a sprint (incluindo o job `e2e`), revisão independente feita, `docs/MVP.md` e README atualizados, PR da sprint para a `main` com `revisao-responsavel`.
+
+### Plano de ação
+
+**Este ciclo executa.** Itens 1 a 7.
+
+**Vira issue.** Ligar os alertas do Dependabot (#29, responsável); exigir o check `e2e` no ruleset (#30, responsável); celular no e2e (#31); alterar e excluir no e2e (#32); versões maiores (#33); #25 e #19 seguem; #18 segue com o responsável.

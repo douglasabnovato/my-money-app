@@ -101,6 +101,18 @@ test("valor com vírgula (formato brasileiro) é aceito e somado em centavos", a
   await request(app).post("/api/billingCycles").set("Authorization", token).send({ ...cycle, debts: [{ name: "x", value: "abc" }] }).expect(400);
   await request(app).post("/api/billingCycles").set("Authorization", token).send({ ...cycle, debts: [{ name: "x", value: "1,500.50" }] }).expect(400);
 });
+test("mensagens de validação em português, com o nome do campo da tela (#23)", async () => {
+  const app = build();
+  const token = await signup(app, "leo@empresa.test");
+  const res = await request(app).post("/api/billingCycles").set("Authorization", token).send({ name: "", month: 13, year: 2026, debts: [{ name: "Aluguel", value: "abc" }] }).expect(400);
+  assert.deepEqual(res.body.errors, ["Nome: preencha este campo", "Mês: informe um valor até 12", "Débitos, linha 1, valor: informe um valor válido"]);
+  const vazio = await request(app).post("/api/billingCycles").set("Authorization", token).send({ name: "Maio", month: "", year: "" }).expect(400);
+  assert.deepEqual(vazio.body.errors, ["Mês: campo obrigatório", "Ano: campo obrigatório"]);
+  const cad = await request(app).post("/oapi/signup").send({ name: "Ana Teste", email: "ana@empresa.test", password: "abc", confirm_password: "abd" }).expect(400);
+  assert.ok(cad.body.errors.includes("Senha: A senha precisa ter pelo menos 8 caracteres."));
+  assert.ok(cad.body.errors.includes("Confirmar senha: As senhas não conferem."));
+});
+
 test("falha do banco vira 500 no formato { errors } (sem travar a requisição)", async () => {
   const repos = createMemoryRepositories();
   repos.cycles.list = async () => { throw new Error("mongo fora"); };

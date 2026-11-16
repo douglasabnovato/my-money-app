@@ -13,6 +13,13 @@ function toNumber(v) {
 const money = z.preprocess(toNumber, z.coerce.number().finite().min(0).max(100_000_000).transform((n) => Math.round(n * 100) / 100));
 const STATUS = ["PAGO", "PENDENTE", "AGENDADO"];
 
+/* Inteiro obrigatório: campo vazio responde "campo obrigatório", e não "a partir de 1" (o coerce faria "" virar 0) */
+const inteiro = (min, max) =>
+  z.preprocess(
+    (v) => (v === "" || v === null ? undefined : v),
+    z.unknown().refine((v) => v !== undefined, { message: "campo obrigatório", abort: true }).pipe(z.coerce.number().int().min(min).max(max))
+  );
+
 const signup = z
   .object({
     name: z.string().trim().min(2).max(80),
@@ -35,8 +42,8 @@ const login = z.object({
 
 const cycle = z.object({
   name: z.string().trim().min(1).max(80),
-  month: z.coerce.number().int().min(1).max(12),
-  year: z.coerce.number().int().min(1970).max(2100),
+  month: inteiro(1, 12),
+  year: inteiro(1970, 2100),
   credits: z.array(z.object({ name: z.string().trim().min(1).max(80), value: money })).max(200).default([]),
   debts: z
     .array(
@@ -50,10 +57,48 @@ const cycle = z.object({
     .default([]),
 });
 
-/* Converte issues do zod em mensagens simples (formato { errors: [] } do front) */
-function messages(error) {
-  return error.issues.map((i) => (i.path.length ? `${i.path.join(".")}: ${i.message}` : i.message));
+/* Nome que a pessoa vê na tela para cada campo da API */
+const LABELS = {
+  name: "Nome", email: "E-mail", password: "Senha", confirm_password: "Confirmar senha",
+  month: "Mês", year: "Ano", credits: "Créditos", debts: "Débitos", value: "valor", status: "status",
+};
+
+/* Mensagem em português por tipo de erro; as mensagens próprias do esquema (senha) têm prioridade (#23) */
+function ptBR(issue) {
+  const texto = issue.origin === "string";
+  switch (issue.code) {
+    case "invalid_type":
+      return issue.input === undefined ? "campo obrigatório" : "informe um valor válido";
+    case "too_small":
+      if (texto) return issue.minimum <= 1 ? "preencha este campo" : `use pelo menos ${issue.minimum} caracteres`;
+      if (issue.origin === "array") return "lista vazia";
+      return issue.inclusive === false ? `informe um valor maior que ${issue.minimum}` : `informe um valor a partir de ${issue.minimum}`;
+    case "too_big":
+      if (texto) return `use no máximo ${issue.maximum} caracteres`;
+      if (issue.origin === "array") return `no máximo ${issue.maximum} linhas`;
+      return issue.inclusive === false ? `informe um valor menor que ${issue.maximum}` : `informe um valor até ${issue.maximum}`;
+    case "invalid_format":
+      return issue.format === "email" ? "informe um e-mail válido" : "formato inválido";
+    case "invalid_value":
+      return "escolha uma opção da lista";
+    default:
+      return "valor inválido";
+  }
 }
 
-module.exports = { signup, login, cycle, messages, STATUS };
+/* Valida com as mensagens em português (passar como 2º argumento de safeParse) */
+const parseOptions = { error: ptBR };
+
+/* "debts.0.value" vira "Débitos, linha 1, valor" (formato { errors: [] } do front) */
+function messages(error) {
+  return error.issues.map((i) => {
+    if (!i.path.length) return i.message;
+    const onde = i.path
+      .map((p, n) => (typeof p === "number" ? `linha ${p + 1}` : n > 0 ? (LABELS[p] || p).toLowerCase() : LABELS[p] || p))
+      .join(", ");
+    return `${onde}: ${i.message}`;
+  });
+}
+
+module.exports = { signup, login, cycle, messages, parseOptions, STATUS };
 /* Fim de validation.js */

@@ -1,26 +1,33 @@
-> **Projeto de estudo (N1).** Estado conferido em 06/11/2026. Sem publicação no ar: rode localmente (seção "Inicializar o projeto"). Critérios em [docs/MVP.md](docs/MVP.md).
+> **Projeto de estudo (N1).** Estado conferido em 16/11/2026. Sem publicação no ar: rode localmente (seção "Inicializar o projeto"). Critérios em [docs/MVP.md](docs/MVP.md): 9 de 10 aplicáveis atendidos, **Finalizado: sim** (o que falta depende do responsável).
 
-## Estado e próximos passos (ciclo de 07/11/2026)
+## Estado e próximos passos (ciclo de 16/11/2026)
 
-Sem link publicado: o endereço antigo no Render não responde, e a decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
+Sem link publicado: em 16/11/2026, `my-money-web.onrender.com` e `my-money-api.onrender.com/health` responderam 404. A decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
 
-**O que foi feito** (09/11/2026, na sprint `developer/sprint-2026-11-12`; a `main` recebe depois da revisão do responsável)
+**O que foi feito** (16/11/2026, no PR [#34](https://github.com/douglasabnovato/my-money-app/pull/34) para a sprint `developer/sprint-2026-11-19`; a `main` recebe depois da revisão do responsável)
 
-- Fluxo principal percorrido no navegador: registro, cadastro de ciclo, lista e painel (registro no `docs/MVP.md`, critério 3).
-- A API aceita valor com vírgula ("1500,50"), achado no percurso, com teste.
-- Painel e lista mostram "Carregando…" (#16); teste do cadastro de ciclo na tela (#15). Front: 13 testes; API: 10.
-- `docs/MVP.md`: 10 de 10 critérios aplicáveis desde 10/11/2026, com a `main` protegida pelo ruleset `principal-protegida` ([#17](https://github.com/douglasabnovato/my-money-app/issues/17)).
+- Teste de ponta a ponta no navegador (Playwright) do fluxo principal: criar conta, cadastrar um ciclo com "1500,50", ver a lista e o painel somar. O axe roda em cada tela, e um teste faz o cadastro só com o teclado. Novos jobs `e2e` e `auditoria` no CI.
+- O e2e achou e o ciclo corrigiu: títulos fora de ordem no painel ([#24](https://github.com/douglasabnovato/my-money-app/issues/24)), abas sem `tablist` e contraste no meio da animação dos avisos.
+- Mensagens de validação da API em português, com o nome do campo da tela ([#23](https://github.com/douglasabnovato/my-money-app/issues/23)).
+- Mongoose 8.24.9 (a 8.24.4 tinha 4 avisos altos) e patches de produção; código morto do CRA removido; `docs/DEPLOY.md` atualizado.
+- Ciclos anteriores: carregamento, valor com vírgula e teste do cadastro de ciclo (PR [#22](https://github.com/douglasabnovato/my-money-app/pull/22)); `main` protegida ([#17](https://github.com/douglasabnovato/my-money-app/issues/17)).
 
 **O que queremos fazer**
 
+- [#29](https://github.com/douglasabnovato/my-money-app/issues/29) Alertas do Dependabot (responsável): ligados em 16/11/2026. Os 4 abertos (Mongoose 8.24.4 da `main`) já estão corrigidos na sprint-19 e fecham com o merge do PR [#36](https://github.com/douglasabnovato/my-money-app/pull/36).
+- [#30](https://github.com/douglasabnovato/my-money-app/issues/30) Exigir o check `e2e` no ruleset da `main` (responsável).
+- [#31](https://github.com/douglasabnovato/my-money-app/issues/31) Testar o fluxo principal em largura de celular.
+- [#32](https://github.com/douglasabnovato/my-money-app/issues/32) Testar alterar e excluir ciclo no navegador.
+- [#25](https://github.com/douglasabnovato/my-money-app/issues/25) Carregamento correto com pedidos simultâneos.
 - [#19](https://github.com/douglasabnovato/my-money-app/issues/19) Mostrar a evolução mensal no painel.
-- Mensagens de validação da API em português e ordem dos títulos (issues do ciclo de 07/11).
+- [#33](https://github.com/douglasabnovato/my-money-app/issues/33) Atualizar React, Redux e jsdom para as versões maiores atuais.
 - [#18](https://github.com/douglasabnovato/my-money-app/issues/18) Decidir a publicação no Render (responsável).
 
 **Onde está a documentação**
 
 - [docs/MVP.md](docs/MVP.md): estado de cada critério, com evidência e data.
-- [docs/PLANO-DE-ACAO.md](docs/PLANO-DE-ACAO.md): seção "Ciclo de 07/11/2026", com pesquisa e backlog.
+- [docs/PLANO-DE-ACAO.md](docs/PLANO-DE-ACAO.md): seção "Ciclo de 16/11/2026", com pesquisa e backlog.
+- [docs/DEPLOY.md](docs/DEPLOY.md): passo a passo para publicar no Render com o MongoDB Atlas.
 
 <h4 align="center"> 
 	🚧 My Money App 🚧
@@ -105,7 +112,14 @@ cd frontend && cp .env.example .env   # VITE_API_BASE=http://localhost:3003
 npm install && npm run dev            # :5173
 ```
 
-Testes: `npm test` em `backend/` (10) e `frontend/` (13). Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: `.github/workflows/ci.yml`, em push e PR para a `main` e `developer/**`.
+Testes: `npm test` em `backend/` (11) e `frontend/` (13). Teste no navegador (sobe sozinho a API em memória na porta 3093 e o front na 5193):
+
+```sh
+cd frontend && npx playwright install chromium   # uma vez
+npm run test:e2e                                 # 3 testes, com axe e teclado
+```
+
+Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: `.github/workflows/ci.yml`, em push e PR para a `main` e `developer/**`, com os jobs `backend`, `frontend`, `e2e` e `auditoria`.
 
 ### Instruções originais
 
