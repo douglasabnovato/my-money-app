@@ -99,4 +99,30 @@ test('cria conta só com o teclado, com foco visível em cada campo', async ({ p
   await page.keyboard.press('Enter')
   await expect(page.getByRole('heading', { level: 1, name: /Dashboard/ })).toBeVisible()
 })
+test('valor inválido mostra o erro em português e não salva o ciclo (#23)', async ({ page }) => {
+  const { nome, email, senha } = conta('erro')
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Novo usuário? Registrar aqui!' }).click()
+  await page.getByLabel('Nome').fill(nome)
+  await page.getByLabel('E-mail').fill(email)
+  await page.getByLabel('Senha', { exact: true }).fill(senha)
+  await page.getByLabel('Confirmar senha').fill(senha)
+  await page.getByRole('button', { name: 'Registrar' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: /Dashboard/ })).toBeVisible()
+
+  await page.getByRole('link', { name: 'Ciclos de Pagamentos' }).click()
+  await page.getByRole('tab', { name: 'Incluir' }).click()
+  await page.getByLabel('Nome', { exact: true }).fill('Dezembro')
+  await page.getByLabel('Mês').selectOption({ label: 'Dezembro' })
+  await page.getByLabel('Ano').fill('2026')
+  await page.getByLabel('Débitos: nome da linha 1').fill('Aluguel')
+  await page.getByLabel('Débitos: valor da linha 1').fill('abc')
+  await page.getByRole('button', { name: 'Incluir', exact: true }).click()
+
+  /* A API responde 400 com a frase em português, e a tela mostra a frase, sem o texto interno do zod */
+  await expect(page.getByText('Débitos, linha 1, valor: informe um valor válido')).toBeVisible()
+  await expect(page.getByText(/Invalid input|expected number/)).toHaveCount(0)
+  await page.getByRole('tab', { name: 'Listar' }).click()
+  await expect(page.getByText('Nenhum ciclo cadastrado. Use a aba “Incluir”.')).toBeVisible()
+})
 /* Fim de fluxo.e2e.js */
