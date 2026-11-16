@@ -127,7 +127,8 @@ Executado em 06/11/2026, nas branches `feature/2026-11-06` → `developer/sprint
 | 4 | Ordem dos títulos (#24), conferida pelo axe no e2e | Médio | Baixo | Este ciclo |
 | 5 | Código morto do CRA e CI duplicado em `ci/` | Baixo | Baixo | Este ciclo |
 | 6 | `DEPLOY.md` atualizado (passos antigos já feitos) | Médio | Baixo | Este ciclo |
-| 7 | Mensagens da API em português (#23), pedidos simultâneos (#25), evolução mensal (#19) | Médio | Médio | Issues |
+| 7 | Mensagens da API em português (#23), com teste na API e no e2e | Médio | Baixo | Este ciclo |
+| 8 | Pedidos simultâneos (#25), evolução mensal (#19) | Médio | Médio | Issues |
 
 **Fora do escopo.** Publicação (#18, do responsável), importação bancária, metas, React 19 e Redux 5 (versões maiores).
 
@@ -135,7 +136,7 @@ Executado em 06/11/2026, nas branches `feature/2026-11-06` → `developer/sprint
 
 **Arquitetura.** Sem mudança: front React 18 + Redux com Vite; API Express 5 + zod + Mongoose, com repositório em memória (`MONGODB_URI=memory`). O e2e sobe a API em memória e o Vite pelo `webServer` do Playwright, com portas próprias.
 
-**Riscos.** O Dependabot está desligado (API 403); o `npm audit` é a única fonte, e o critério 9 fica "Parcial" (regra em decisão na engenharia#33). O app não tem tema escuro próprio: o axe roda só no tema claro. O nome `my-money-api` no Render pode estar ocupado.
+**Riscos.** O Dependabot está desligado (API 403); o `npm audit` é a única fonte, e o critério 9 fica "Parcial" (regra em decisão na [engenharia#33](https://github.com/douglasabnovato/engenharia/issues/33)). O app não tem tema escuro próprio: o axe roda só no tema claro. O nome `my-money-api` no Render pode estar ocupado.
 
 **Qualidade.** API `npm test`, front `npm test` e build, e2e `npm run test:e2e` com axe (WCAG A e AA e `heading-order`) e teste de teclado. Auditoria de produção num job à parte.
 
@@ -143,6 +144,6 @@ Executado em 06/11/2026, nas branches `feature/2026-11-06` → `developer/sprint
 
 ### Plano de ação
 
-**Este ciclo executa.** Itens 1 a 6.
+**Este ciclo executa.** Itens 1 a 7.
 
-**Vira issue.** Ligar os alertas do Dependabot (responsável); exigir o check `e2e` no ruleset (responsável); #23, #25 e #19 seguem; #18 segue com o responsável.
+**Vira issue.** Ligar os alertas do Dependabot (#29, responsável); exigir o check `e2e` no ruleset (#30, responsável); celular no e2e (#31); alterar e excluir no e2e (#32); versões maiores (#33); #25 e #19 seguem; #18 segue com o responsável.
