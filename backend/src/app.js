@@ -26,7 +26,7 @@ function createApp({ repos, config }) {
 
   /* Valida o corpo e responde 400 no formato { errors: [] } */
   function parse(schema, body, res) {
-    const result = schema.safeParse(body);
+    const result = schema.safeParse(body, v.parseOptions);
     if (!result.success) {
       res.status(400).json({ errors: v.messages(result.error) });
       return null;
