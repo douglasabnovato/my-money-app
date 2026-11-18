@@ -227,4 +227,62 @@ test.describe('aviso com a animação normal (#35)', () => {
   })
 })
 
+test.describe('largura de celular (#31) @celular', () => {
+  /* Sem rolagem lateral com o menu fechado: nem a página nem a moldura do AdminLTE (.wrapper, que esconde o excesso) passam da janela */
+  async function semRolagemLateral(page) {
+    const largura = await page.evaluate(() => ({
+      pagina: document.documentElement.scrollWidth,
+      moldura: document.querySelector('.wrapper').scrollWidth,
+      conteudo: document.querySelector('.content-wrapper').scrollWidth,
+      janela: window.innerWidth,
+    }))
+    expect(largura.pagina).toBeLessThanOrEqual(largura.janela)
+    expect(largura.moldura).toBeLessThanOrEqual(largura.janela)
+    expect(largura.conteudo).toBeLessThanOrEqual(largura.janela)
+  }
+
+  const menuAberto = page => page.evaluate(() => document.body.classList.contains('sidebar-open'))
+  const botaoMenu = page => page.getByRole('button', { name: 'Mostrar ou esconder o menu' })
+
+  /* Abre o menu lateral pelo botão (o AdminLTE o mantém aberto depois de navegar) */
+  async function abrirMenu(page) {
+    if (!(await menuAberto(page))) await botaoMenu(page).click()
+    const link = page.getByRole('complementary', { name: 'Menu principal' }).getByRole('link', { name: 'Dashboard' })
+    await link.scrollIntoViewIfNeeded()
+    await expect(link).toBeInViewport()
+  }
+
+  /* Fecha o menu pelo mesmo botão */
+  async function fecharMenu(page) {
+    if (await menuAberto(page)) {
+      await botaoMenu(page).scrollIntoViewIfNeeded()
+      await botaoMenu(page).click()
+    }
+    await expect.poll(() => menuAberto(page)).toBe(false)
+  }
+
+  test('fluxo principal em 375 px, com o menu aberto pelo botão', async ({ page }) => {
+    await registrar(page, 'celular')
+    expect(page.viewportSize().width).toBe(375)
+    await semRolagemLateral(page)
+
+    await abrirMenu(page)
+    const menu = page.getByRole('complementary', { name: 'Menu principal' })
+    await expect(menu.getByRole('link', { name: 'Ciclos de Pagamentos' })).toBeInViewport()
+    await semViolacoes(page)
+
+    await menu.getByRole('link', { name: 'Ciclos de Pagamentos' }).click()
+    await expect(page.getByRole('heading', { level: 1, name: /Ciclos de Pagamentos/ })).toBeVisible()
+    await fecharMenu(page)
+    await incluirCiclo(page, { nome: 'Agosto', credito: '3000', debito: '1200,50' })
+    await semRolagemLateral(page)
+    await semViolacoes(page)
+
+    await abrirMenu(page)
+    await conferirPainel(page, /R\$\s3\.000,00/, /R\$\s1\.200,50/, /R\$\s1\.799,50/)
+    await fecharMenu(page)
+    await semRolagemLateral(page)
+    await semViolacoes(page)
+  })
+})
 /* Fim de fluxo.e2e.js */
