@@ -180,6 +180,8 @@ test('altera e exclui um ciclo, e o painel acompanha (#32)', async ({ page }) =>
   await expect(debito).toHaveValue('1000')
   await semViolacoes(page)
   await debito.fill('2500,25')
+  /* O aviso do Incluir precisa sumir antes: com preventDuplicates, o aviso igual do Alterar seria descartado */
+  await expect(page.locator('.redux-toastr .toastr')).toHaveCount(0, { timeout: 8000 })
   await page.getByRole('button', { name: 'Alterar', exact: true }).click()
   await expect(page.getByText('Operação realizada com sucesso.')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Alterar Outubro' })).toBeVisible()
@@ -217,11 +219,15 @@ test.describe('aviso com a animação normal (#35)', () => {
     const aviso = page.locator('.redux-toastr .toastr').filter({ hasText: 'Operação realizada com sucesso.' })
     await expect(aviso).toBeVisible()
     /* axe logo depois de o aviso aparecer, ainda durante a entrada, três vezes */
+    /* O axe dá como aprovado o que está fora da tela: contar as rodadas em que ele de fato avaliou o aviso */
+    let avaliadas = 0
     for (let i = 0; i < 3; i++) {
       const r = await new AxeBuilder({ page }).include('.redux-toastr').withRules(['color-contrast']).analyze()
       expect(r.violations.map(v => `${v.id}: ${v.nodes.length}`)).toEqual([])
+      if (r.passes.some(p => p.id === 'color-contrast' && p.nodes.length > 0)) avaliadas++
       await page.waitForTimeout(100)
     }
+    expect(avaliadas).toBeGreaterThan(0)
     /* timeOut de 4 s no messages.jsx, mais a saída */
     await expect(aviso).toHaveCount(0, { timeout: 8000 })
   })
