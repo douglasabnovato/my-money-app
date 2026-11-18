@@ -11,7 +11,7 @@ function conta(prefixo) {
 /* axe sem violações nas regras WCAG A e AA, mais a ordem dos títulos (#24) */
 async function semViolacoes(page) {
   const wcag = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze()
-  expect(wcag.violations.map(v => `${v.id}: ${v.nodes.length}`)).toEqual([])
+  expect(wcag.violations.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(" ")).join(", ")}`)).toEqual([])
   const titulos = await new AxeBuilder({ page }).withRules(['heading-order', 'page-has-heading-one']).analyze()
   expect(titulos.violations.map(v => `${v.id}: ${v.nodes.length}`)).toEqual([])
 }
@@ -129,4 +129,72 @@ test('valor inválido mostra o erro em português e não salva o ciclo (#23)', a
   await page.getByRole('tab', { name: 'Listar' }).click()
   await expect(page.getByText('Nenhum ciclo cadastrado. Use a aba “Incluir”.')).toBeVisible()
 })
+
+/* Cria uma conta nova e chega ao painel */
+async function registrar(page, prefixo) {
+  const { nome, email, senha } = conta(prefixo)
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Novo usuário? Registrar aqui!' }).click()
+  await page.getByLabel('Nome').fill(nome)
+  await page.getByLabel('E-mail').fill(email)
+  await page.getByLabel('Senha', { exact: true }).fill(senha)
+  await page.getByLabel('Confirmar senha').fill(senha)
+  await page.getByRole('button', { name: 'Registrar' }).click()
+  await expect(page.getByRole('heading', { level: 1, name: /Dashboard/ })).toBeVisible()
+}
+
+/* Na tela de ciclos, inclui um ciclo com um crédito e um débito e volta à lista */
+async function incluirCiclo(page, { nome, credito, debito }) {
+  await page.getByRole('tab', { name: 'Incluir' }).click()
+  await page.getByLabel('Nome', { exact: true }).fill(nome)
+  await page.getByLabel('Mês').selectOption({ label: nome })
+  await page.getByLabel('Ano').fill('2026')
+  await page.getByLabel('Créditos: nome da linha 1').fill('Salário')
+  await page.getByLabel('Créditos: valor da linha 1').fill(credito)
+  await page.getByLabel('Débitos: nome da linha 1').fill('Aluguel')
+  await page.getByLabel('Débitos: valor da linha 1').fill(debito)
+  await page.getByRole('button', { name: 'Incluir', exact: true }).click()
+  await expect(page.getByRole('button', { name: `Alterar ${nome}` })).toBeVisible()
+}
+
+/* Painel: crédito, débito e saldo */
+async function conferirPainel(page, credito, debito, saldo) {
+  await page.getByRole('complementary', { name: 'Menu principal' }).getByRole('link', { name: 'Dashboard' }).click()
+  const painel = page.locator('#conteudo')
+  await expect(painel.locator('.small-box.bg-green')).toContainText(credito)
+  await expect(painel.locator('.small-box.bg-red')).toContainText(debito)
+  await expect(painel.locator('.small-box.bg-blue')).toContainText(saldo)
+}
+
+test('altera e exclui um ciclo, e o painel acompanha (#32)', async ({ page }) => {
+  await registrar(page, 'crud')
+  await page.getByRole('link', { name: 'Ciclos de Pagamentos' }).click()
+  await incluirCiclo(page, { nome: 'Outubro', credito: '4000', debito: '1000' })
+  await conferirPainel(page, /R\$\s4\.000,00/, /R\$\s1\.000,00/, /R\$\s3\.000,00/)
+
+  /* Alterar: o formulário chega preenchido (initialize do redux-form) e o novo débito muda o saldo */
+  await page.getByRole('link', { name: 'Ciclos de Pagamentos' }).click()
+  await page.getByRole('button', { name: 'Alterar Outubro' }).click()
+  await expect(page.getByRole('tab', { name: 'Alterar' })).toHaveAttribute('aria-selected', 'true')
+  const debito = page.getByLabel('Débitos: valor da linha 1')
+  await expect(debito).toHaveValue('1000')
+  await semViolacoes(page)
+  await debito.fill('2500,25')
+  await page.getByRole('button', { name: 'Alterar', exact: true }).click()
+  await expect(page.getByText('Operação realizada com sucesso.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Alterar Outubro' })).toBeVisible()
+  await conferirPainel(page, /R\$\s4\.000,00/, /R\$\s2\.500,25/, /R\$\s1\.499,75/)
+
+  /* Excluir: o formulário fica só para leitura; confirmar no botão "Excluir" apaga o ciclo */
+  await page.getByRole('link', { name: 'Ciclos de Pagamentos' }).click()
+  await page.getByRole('button', { name: 'Excluir Outubro' }).click()
+  await expect(page.getByRole('tab', { name: 'Excluir' })).toHaveAttribute('aria-selected', 'true')
+  await expect(page.getByLabel('Nome', { exact: true })).toHaveAttribute('readonly', '')
+  await semViolacoes(page)
+  await page.getByRole('button', { name: 'Excluir', exact: true }).click()
+  await expect(page.getByText('Nenhum ciclo cadastrado. Use a aba “Incluir”.')).toBeVisible()
+  await expect(page.getByRole('row').filter({ hasText: 'Outubro' })).toHaveCount(0)
+  await conferirPainel(page, /R\$\s0,00/, /R\$\s0,00/, /R\$\s0,00/)
+})
+
 /* Fim de fluxo.e2e.js */

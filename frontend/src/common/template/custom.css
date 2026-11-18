@@ -33,6 +33,12 @@ button {
 .skin-blue .sidebar-menu .treeview-menu > li > a { color: #d2dee4; }
 .btn-link { color: #1d4f7a; }
 .btn-primary { background-color: #1d4f7a; border-color: #173f61; color: #fff; }
+/* Botão "Alterar" do formulário: o azul-claro do AdminLTE (#00c0ef) não chega a 4,5:1 com o branco (#32) */
+.btn-info { background-color: #00648a; border-color: #005273; color: #fff; }
+.btn-info:hover, .btn-info:focus, .btn-info:active { background-color: #004f6d; border-color: #003f57; color: #fff; }
+/* Botão "Excluir" do formulário: o vermelho do AdminLTE (#dd4b39) fica abaixo de 4,5:1 com o branco (#32) */
+.btn-danger { background-color: #b43a2b; border-color: #9a3123; color: #fff; }
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active { background-color: #962f22; border-color: #7f271c; color: #fff; }
 .bg-green, .small-box.bg-green { background-color: #00733e !important; }
 .bg-red, .small-box.bg-red { background-color: #b43a2b !important; }
 .content-header > h1 > small { color: #555; }
