@@ -47,6 +47,15 @@ button {
 .main-footer a { color: #1d4f7a; }
 div.redux-toastr .toastr.rrt-success { background-color: #2e7d32; }
 div.redux-toastr .toastr.rrt-error { background-color: #b3261e; }
+/* O toastr usa opacidade .94: sobre fundo claro (no celular) o título caía para 4,23:1. Aviso opaco (#31, #35) */
+div.redux-toastr .toastr { opacity: 1; }
+/* Entrada do aviso desliza da direita sem transparência: o contraste do texto vale desde o primeiro quadro (#35).
+   O nome da classe segue "fadeIn" porque o react-redux-toastr só aceita os nomes dele; troca-se só a animação */
+.redux-toastr .animated.fadeIn { animation-name: avisoEntraDeslizando; animation-duration: .3s; }
+@keyframes avisoEntraDeslizando {
+    from { transform: translateX(110%); }
+    to { transform: none; }
+}
 /* Com "reduzir movimento" no sistema, os avisos aparecem sem animação de 1 s; 1 ms mantém o animationend que o toastr usa para remover o aviso */
 @media (prefers-reduced-motion: reduce) {
     .redux-toastr .animated { animation-duration: 1ms !important; }

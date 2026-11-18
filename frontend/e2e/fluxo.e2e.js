@@ -197,4 +197,34 @@ test('altera e exclui um ciclo, e o painel acompanha (#32)', async ({ page }) =>
   await conferirPainel(page, /R\$\s0,00/, /R\$\s0,00/, /R\$\s0,00/)
 })
 
+test.describe('aviso com a animação normal (#35)', () => {
+  /* Sem "reduzir movimento": a animação de entrada é a que a maioria das pessoas vê */
+  test.use({ reducedMotion: 'no-preference' })
+
+  test('o aviso de sucesso tem contraste desde a entrada e some sozinho', async ({ page }) => {
+    await registrar(page, 'aviso')
+    await page.getByRole('link', { name: 'Ciclos de Pagamentos' }).click()
+    await page.getByRole('tab', { name: 'Incluir' }).click()
+    await page.getByLabel('Nome', { exact: true }).fill('Setembro')
+    await page.getByLabel('Mês').selectOption({ label: 'Setembro' })
+    await page.getByLabel('Ano').fill('2026')
+    await page.getByLabel('Créditos: nome da linha 1').fill('Salário')
+    await page.getByLabel('Créditos: valor da linha 1').fill('2000')
+    await page.getByLabel('Débitos: nome da linha 1').fill('Luz')
+    await page.getByLabel('Débitos: valor da linha 1').fill('150')
+    await page.getByRole('button', { name: 'Incluir', exact: true }).click()
+
+    const aviso = page.locator('.redux-toastr .toastr').filter({ hasText: 'Operação realizada com sucesso.' })
+    await expect(aviso).toBeVisible()
+    /* axe logo depois de o aviso aparecer, ainda durante a entrada, três vezes */
+    for (let i = 0; i < 3; i++) {
+      const r = await new AxeBuilder({ page }).include('.redux-toastr').withRules(['color-contrast']).analyze()
+      expect(r.violations.map(v => `${v.id}: ${v.nodes.length}`)).toEqual([])
+      await page.waitForTimeout(100)
+    }
+    /* timeOut de 4 s no messages.jsx, mais a saída */
+    await expect(aviso).toHaveCount(0, { timeout: 8000 })
+  })
+})
+
 /* Fim de fluxo.e2e.js */
