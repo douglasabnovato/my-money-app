@@ -1,10 +1,17 @@
-> **Projeto de estudo (N1).** Estado conferido em 16/11/2026. Sem publicação no ar: rode localmente (seção "Inicializar o projeto"). Critérios em [docs/MVP.md](docs/MVP.md): 9 de 10 aplicáveis atendidos, **Finalizado: sim** (o que falta depende do responsável).
+> **Projeto de estudo (N1).** Estado conferido em 18/11/2026. Sem publicação no ar: rode localmente (seção "Inicializar o projeto"). Critérios em [docs/MVP.md](docs/MVP.md): 10 de 10 aplicáveis atendidos, **Finalizado: sim** (o que falta depende do responsável).
 
-## Estado e próximos passos (ciclo de 16/11/2026)
+## Estado e próximos passos (ciclo de 18/11/2026)
 
-Sem link publicado: em 16/11/2026, `my-money-web.onrender.com` e `my-money-api.onrender.com/health` responderam 404. A decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
+Sem link publicado: em 18/11/2026, `my-money-web.onrender.com` e `my-money-api.onrender.com/health` responderam 404. A decisão de publicar está em [#18](https://github.com/douglasabnovato/my-money-app/issues/18).
 
-**O que foi feito** (16/11/2026, no PR [#34](https://github.com/douglasabnovato/my-money-app/pull/34) para a sprint `developer/sprint-2026-11-19`; a `main` recebe depois da revisão do responsável)
+**O que foi feito** (18/11/2026, na branch `feature/2026-11-18` para a sprint `developer/sprint-2026-11-19`)
+
+- Lista e painel ignoram a resposta de um pedido antigo ([#25](https://github.com/douglasabnovato/my-money-app/issues/25)).
+- Teste no navegador de alterar e excluir um ciclo, com o contraste dos botões corrigido ([#32](https://github.com/douglasabnovato/my-money-app/issues/32)).
+- Teste no navegador em 375 px, com o menu aberto pelo botão; o botão do usuário ganhou nome no celular ([#31](https://github.com/douglasabnovato/my-money-app/issues/31)).
+- Avisos com contraste também durante a entrada ([#35](https://github.com/douglasabnovato/my-money-app/issues/35)).
+
+**Ciclo anterior** (16/11/2026, no PR [#34](https://github.com/douglasabnovato/my-money-app/pull/34) para a sprint `developer/sprint-2026-11-19`; na `main` desde 16/11/2026, pelo PR [#36](https://github.com/douglasabnovato/my-money-app/pull/36))
 
 - Teste de ponta a ponta no navegador (Playwright) do fluxo principal: criar conta, cadastrar um ciclo com "1500,50", ver a lista e o painel somar. O axe roda em cada tela, e um teste faz o cadastro só com o teclado. Novos jobs `e2e` e `auditoria` no CI.
 - O e2e achou e o ciclo corrigiu: títulos fora de ordem no painel ([#24](https://github.com/douglasabnovato/my-money-app/issues/24)), abas sem `tablist` e contraste no meio da animação dos avisos.
@@ -14,14 +21,11 @@ Sem link publicado: em 16/11/2026, `my-money-web.onrender.com` e `my-money-api.o
 
 **O que queremos fazer**
 
-- [#29](https://github.com/douglasabnovato/my-money-app/issues/29) Alertas do Dependabot (responsável): ligados em 16/11/2026. Os 4 abertos (Mongoose 8.24.4 da `main`) já estão corrigidos na sprint-19 e fecham com o merge do PR [#36](https://github.com/douglasabnovato/my-money-app/pull/36).
+- [#29](https://github.com/douglasabnovato/my-money-app/issues/29) Alertas do Dependabot (responsável): ligados; 0 abertos em 18/11/2026. Falta ligar as atualizações automáticas de segurança.
 - [#30](https://github.com/douglasabnovato/my-money-app/issues/30) Exigir o check `e2e` no ruleset da `main` (responsável).
-- [#31](https://github.com/douglasabnovato/my-money-app/issues/31) Testar o fluxo principal em largura de celular.
-- [#32](https://github.com/douglasabnovato/my-money-app/issues/32) Testar alterar e excluir ciclo no navegador.
-- [#25](https://github.com/douglasabnovato/my-money-app/issues/25) Carregamento correto com pedidos simultâneos.
-- [#19](https://github.com/douglasabnovato/my-money-app/issues/19) Mostrar a evolução mensal no painel.
 - [#33](https://github.com/douglasabnovato/my-money-app/issues/33) Atualizar React, Redux e jsdom para as versões maiores atuais.
 - [#18](https://github.com/douglasabnovato/my-money-app/issues/18) Decidir a publicação no Render (responsável).
+- Esperam o merge na `main`: [#25](https://github.com/douglasabnovato/my-money-app/issues/25), [#31](https://github.com/douglasabnovato/my-money-app/issues/31), [#32](https://github.com/douglasabnovato/my-money-app/issues/32) e [#35](https://github.com/douglasabnovato/my-money-app/issues/35).
 
 **Onde está a documentação**
 
@@ -112,11 +116,11 @@ cd frontend && cp .env.example .env   # VITE_API_BASE=http://localhost:3003
 npm install && npm run dev            # :5173
 ```
 
-Testes: `npm test` em `backend/` (11) e `frontend/` (13). Teste no navegador (sobe sozinho a API em memória na porta 3093 e o front na 5193):
+Testes: `npm test` em `backend/` (11) e `frontend/` (16). Teste no navegador (sobe sozinho a API em memória na porta 3093 e o front na 5193):
 
 ```sh
 cd frontend && npx playwright install chromium   # uma vez
-npm run test:e2e                                 # 3 testes, com axe e teclado
+npm run test:e2e                                 # 6 testes (5 em desktop, 1 em 375 px), com axe e teclado
 ```
 
 Deploy gratuito: `render.yaml` (API + site estático) com MongoDB Atlas M0, passo a passo em [docs/DEPLOY.md](docs/DEPLOY.md). CI: `.github/workflows/ci.yml`, em push e PR para a `main` e `developer/**`, com os jobs `backend`, `frontend`, `e2e` e `auditoria`.

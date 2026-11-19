@@ -32,6 +32,8 @@ class Navbar extends Component {
                             onClick={() => this.toggle()}>
                             <span className='user-image avatar-initials' aria-hidden='true'>{initials(name)}</span>
                             <span className='hidden-xs'>{name}</span>
+                            {/* No celular o nome visível some (hidden-xs); o leitor de tela segue com o nome no botão (#31) */}
+                            <span className='sr-only visible-xs-inline'>{name}</span>
                         </button>
                         <ul className='dropdown-menu'>
                             <li className='user-header'>

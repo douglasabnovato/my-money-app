@@ -11,7 +11,11 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [['list']],
   use: { baseURL: `http://localhost:${WEB_PORT}`, trace: 'retain-on-failure', reducedMotion: 'reduce' },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } } }],
+  projects: [
+    { name: 'chromium', grepInvert: /@celular/, use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 800 } } },
+    /* Largura de celular (#31): só os testes marcados com @celular */
+    { name: 'celular', grep: /@celular/, use: { ...devices['Desktop Chrome'], viewport: { width: 375, height: 812 } } },
+  ],
   webServer: [
     {
       command: 'node ../backend/src/server.js',
