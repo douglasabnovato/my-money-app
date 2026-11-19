@@ -9,12 +9,16 @@ import { showTabs, selectTab } from "../common/Tab/TabActions"
 const BASE_URL = consts.API_URL
 const INITIAL_VALUES = {credits: [{}], debts: [{}]}
 
+let lastRequestId = 0
+
 /* Marca o carregamento antes do pedido (redux-multi) e entrega a lista depois (redux-promise) */
+/* O número do pedido vai no meta; o redux-promise o mantém na ação da resposta (#25) */
 export function getList(){
-    const request = axios.get(`${BASE_URL}/billingCycles`) 
+    const meta = { requestId: ++lastRequestId }
+    const request = axios.get(`${BASE_URL}/billingCycles`)
     return [
-        { type: "BILLING_CYCLES_REQUESTED" },
-        { type: "BILLING_CYCLES_FETCHED", payload: request }
+        { type: "BILLING_CYCLES_REQUESTED", meta },
+        { type: "BILLING_CYCLES_FETCHED", payload: request, meta }
     ]
 }
 
